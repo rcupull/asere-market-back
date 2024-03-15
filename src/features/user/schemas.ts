@@ -1,9 +1,10 @@
-import { Schema, model } from "mongoose";
+import { PaginateModel, Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { SECRET_ACCESS_TOKEN } from "../../constants/auth";
 import { User } from "./types";
 import { createdAtSchemaDefinition } from "../../utils/schemas";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const UserSchema = new Schema<User>({
   ...createdAtSchemaDefinition,
@@ -28,6 +29,12 @@ const UserSchema = new Schema<User>({
           },
           dateOfPurchase: { type: String, required: true },
           trialMode: { type: Boolean, required: true },
+          status: {
+            type: String,
+            enum: ["current", "validatingPurchase", "historical"],
+            required: true,
+          },
+          validationPurchaseCode: { type: String },
         },
       ],
       default: [
@@ -35,6 +42,7 @@ const UserSchema = new Schema<User>({
           planType: "free",
           dateOfPurchase: new Date().toISOString(),
           trialMode: true,
+          status: "current",
         },
       ],
     },
@@ -65,6 +73,8 @@ const updateUserPassword = (user: User): Promise<void> => {
   });
 };
 
+UserSchema.plugin(mongoosePaginate);
+
 UserSchema.pre("save", async function (next) {
   const user = this;
 
@@ -79,4 +89,8 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-export const UserModel = model<User>("User", UserSchema, "users");
+export const UserModel = model<User, PaginateModel<User>>(
+  "User",
+  UserSchema,
+  "users"
+);

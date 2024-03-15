@@ -24,6 +24,7 @@ const BusinessSchema = new Schema<Business>({
     type: [
       {
         src: { type: String, required: true },
+        href: { type: String },
       },
     ],
     default: [],

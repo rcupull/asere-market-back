@@ -14,6 +14,8 @@ export type QueryHandle<Args extends AnyRecord = AnyRecord, R = void> = (
 ) => Promise<R | ServerResponse>;
 
 export type PaymentPlanType = "free" | "beginner" | "professional" | "company";
+export type PaymentPlanStatus = "current" | "validatingPurchase" | "historical";
+
 export interface PaymentPlan {
   type: PaymentPlanType;
   price: number; //CUP
@@ -27,4 +29,5 @@ export interface PaymentPlan {
 
 export interface Image {
   src: string;
+  href?: string;
 }

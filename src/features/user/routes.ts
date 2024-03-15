@@ -193,3 +193,14 @@ router
     verifyUser,
     userHandles.get_users_userId_payment_plan()
   );
+
+router
+  .route("/user/:userId/payment/plan/purchase")
+  .post(
+    validators.param("userId").notEmpty(),
+    validators.body("planType").notEmpty(),
+    validators.body("validationPurchaseCode").notEmpty(),
+    validators.handle,
+    verifyUser,
+    userHandles.post_users_userId_payment_plan_purchase()
+  );

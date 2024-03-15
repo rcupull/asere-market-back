@@ -11,6 +11,7 @@ import { imagesServices } from "../images/services";
 import { Post } from "../post/types";
 import { userServices } from "./services";
 import { User } from "./types";
+import { UserModel } from "./schemas";
 
 const get_users_userId: () => RequestHandler = () => {
   return (req: RequestWithPagination, res) => {
@@ -362,11 +363,38 @@ const get_users_userId_payment_plan: () => RequestHandler = () => {
   return (req, res) => {
     withTryCatch(req, res, async () => {
       const { user } = req as RequestWithUser;
-      const { planType } = user.payment.planHistory[0]; // always the firs plan is the curent
-
+      const planHistory = user.payment.planHistory;
+      const { planType } = planHistory[planHistory.length - 1] || {}; // always the last plan is the curent
       const currentPlan = paymentPlans[planType];
 
       res.send(currentPlan);
+    });
+  };
+};
+const post_users_userId_payment_plan_purchase: () => RequestHandler = () => {
+  return (req, res) => {
+    withTryCatch(req, res, async () => {
+      const { user, body } = req as RequestWithUser;
+      const { planType, validationPurchaseCode } = body;
+
+      await UserModel.updateOne(
+        { _id: user._id },
+        {
+          $push: {
+            "payment.planHistory": [
+              {
+                planType,
+                dateOfPurchase: new Date().toISOString(),
+                trialMode: false,
+                status: "validatingPurchase",
+                validationPurchaseCode,
+              },
+            ],
+          },
+        }
+      );
+
+      res.send({});
     });
   };
 };
@@ -389,4 +417,5 @@ export const userHandles = {
   delete_users_userId_posts_postId,
   //
   get_users_userId_payment_plan,
+  post_users_userId_payment_plan_purchase,
 };

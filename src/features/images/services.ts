@@ -32,9 +32,10 @@ const deleteDir: QueryHandle<{
 
   fs.rmdir(path, { recursive: true }, (err) => {
     if (err) {
-      return res.status(400).json({
-        message: "Error deleting the folder",
-      });
+      console.log("Some problem removing the folder");
+      // return res.status(400).json({
+      //   message: "Error deleting the folder",
+      // });
     }
   });
 };
