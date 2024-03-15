@@ -18,3 +18,13 @@ router
     verifyUser,
     adminHandles.del_users_userId()
   );
+
+router
+  .route("/admin/users/:userId/plans/:planId")
+  .put(
+    validators.param("userId").notEmpty(),
+    validators.param("planId").notEmpty(),
+    validators.handle,
+    verifyUser,
+    adminHandles.put_users_userId_plans_planId()
+  );

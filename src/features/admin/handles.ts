@@ -51,7 +51,38 @@ const del_users_userId: () => RequestHandler = () => {
   };
 };
 
+const put_users_userId_plans_planId: () => RequestHandler = () => {
+  return (req, res) => {
+    withTryCatch(req, res, async () => {
+      const { params, body } = req;
+      const { userId, planId } = params;
+      const { status } = body;
+
+      console.log("params", params);
+      console.log("body", body);
+
+      await UserModel.updateOne(
+        { _id: userId },
+        {
+          $set: {
+            "payment.planHistory.$[planToUpdate].status": status,
+          },
+        },
+        {
+          arrayFilters: [
+            {
+              "planToUpdate._id": planId,
+            },
+          ],
+        }
+      );
+      res.send({});
+    });
+  };
+};
+
 export const adminHandles = {
   get_users,
   del_users_userId,
+  put_users_userId_plans_planId,
 };
