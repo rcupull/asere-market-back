@@ -163,6 +163,7 @@ const updateOne: QueryHandle<{
             | "layouts"
             | "layoutsMobile"
             | "postCategories"
+            | "aboutUsPage"
           >
         >
       >

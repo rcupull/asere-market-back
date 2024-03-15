@@ -120,6 +120,11 @@ const BusinessSchema = new Schema<Business>({
       },
     },
   },
+  aboutUsPage: {
+    visible: { type: Boolean, default: false },
+    title: { type: String },
+    description: { type: String },
+  },
 });
 
 BusinessSchema.plugin(mongoosePaginate);

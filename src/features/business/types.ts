@@ -50,6 +50,12 @@ export interface PostCategory {
   hidden?: boolean;
 }
 
+export interface BusinessAboutUsPage {
+  visible?: boolean;
+  title?: string;
+  description?: string; // checkeditor text
+}
+
 export interface Business extends BaseIdentity {
   name: string;
   routeName: string;
@@ -68,4 +74,5 @@ export interface Business extends BaseIdentity {
   };
   layouts?: BusinessLayouts;
   layoutsMobile?: BusinessLayouts;
+  aboutUsPage?: BusinessAboutUsPage;
 }
