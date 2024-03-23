@@ -5,6 +5,7 @@ import { router as authRouter } from "./features/auth/routes";
 import { router as businessRouter } from "./features/business/routes";
 import { router as paymentPlansRouter } from "./features/paymentPlans/routes";
 import { router as adminRouter } from "./features/admin/routes";
+import { router as catalogsRouter } from "./features/catalogs/routes";
 
 export const router = Router();
 
@@ -15,7 +16,8 @@ router.use(
   postRouter,
   businessRouter,
   paymentPlansRouter,
-  adminRouter
+  adminRouter,
+  catalogsRouter
 );
 
 export default router;

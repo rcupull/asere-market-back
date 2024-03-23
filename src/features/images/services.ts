@@ -6,13 +6,16 @@ const deleteOne: QueryHandle<{
   src: string;
 }> = async ({ src, res }) => {
   const fullPath = `${filesDir}${src}`;
-  fs.unlink(fullPath, (err) => {
-    if (err) {
-      return res.status(400).json({
-        message: "Error deleting the image",
-      });
-    }
-  });
+
+  if (fs.existsSync(fullPath)) {
+    fs.unlink(fullPath, (err) => {
+      if (err) {
+        return res.status(400).json({
+          message: "Error deleting the image",
+        });
+      }
+    });
+  }
 };
 
 const deleteDir: QueryHandle<{
