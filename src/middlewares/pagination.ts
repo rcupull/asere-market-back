@@ -1,6 +1,6 @@
 import { Request, RequestHandler, Send } from "express";
 import { PaginationParameters } from "mongoose-paginate-v2";
-import { AnyRecord } from "../types";
+import { AnyRecord } from "../types/general";
 import { PaginateOptions } from "mongoose";
 
 export interface PaginateResult<T> {

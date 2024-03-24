@@ -3,8 +3,8 @@ import { withTryCatch } from "../../utils/error";
 import { RequestWithPagination } from "../../middlewares/pagination";
 import { businessServices } from "./services";
 import { ServerResponse } from "http";
-import { BusinessModel } from "./schemas";
-import { PostModel } from "../post/schemas";
+import { BusinessModel } from "../../schemas/business";
+import { PostModel } from "../../schemas/post";
 
 const get_business: () => RequestHandler = () => {
   return (req, res) => {

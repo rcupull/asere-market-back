@@ -3,7 +3,7 @@ import {
   Image,
   PaymentPlanStatus,
   PaymentPlanType,
-} from "../../types";
+} from "./general";
 
 export type UserRole = "user" | "admin";
 

@@ -1,8 +1,8 @@
 import { Schema, model, PaginateModel } from "mongoose";
-import { Post } from "./types";
+import { Post } from "../types/post";
 import mongoosePaginate from "mongoose-paginate-v2";
-import { createdAtSchemaDefinition } from "../../utils/schemas";
-import { BusinessModel } from "../business/schemas";
+import { createdAtSchemaDefinition } from "../utils/schemas";
+import { BusinessModel } from "./business";
 
 const PostSchema = new Schema<Post>({
   ...createdAtSchemaDefinition,
@@ -15,11 +15,15 @@ const PostSchema = new Schema<Post>({
   hiddenBusiness: { type: Boolean, default: false },
   createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
   postCategoriesTags: { type: [String] },
-  images: [
-    {
-      src: { type: String, required: true },
-    },
-  ],
+  images: {
+    type: [
+      {
+        src: { type: String, required: true },
+        width: { type: Number, required: true },
+        height: { type: Number, required: true },
+      },
+    ],
+  },
   clothingSizes: [
     {
       type: String,

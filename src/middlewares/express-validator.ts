@@ -6,7 +6,7 @@ import {
   body,
   header,
 } from "express-validator";
-import { AnyRecord } from "../types";
+import { AnyRecord } from "../types/general";
 
 const handle: RequestHandler = (
   req: Request,

@@ -1,12 +1,12 @@
 import { RequestHandler } from "express";
 import { withTryCatch } from "../../utils/error";
 import { ServerResponse } from "http";
-import { UserModel } from "../user/schemas";
+import { UserModel } from "../../schemas/user";
 import { v4 as uuid } from "uuid";
-import { SessionModel, ValidationCodeModel } from "./schemas";
+import { SessionModel, ValidationCodeModel } from "../../schemas/auth";
 import { userServices } from "../user/services";
 import { sendEmail } from "../email";
-import { User } from "../user/types";
+import { User } from "../../types/user";
 
 const post_signIn: () => RequestHandler = () => {
   return (req, res, next) => {

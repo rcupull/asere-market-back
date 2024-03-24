@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { BaseIdentity, Image } from "../../types";
+import { BaseIdentity, Image } from "./general";
 
 export type PostCurrency = "CUP" | "MLC" | "USD";
 

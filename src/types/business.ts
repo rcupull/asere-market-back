@@ -1,4 +1,4 @@
-import { BaseIdentity, Image } from "../../types";
+import { BaseIdentity, Image } from "./general";
 import { Schema } from "mongoose";
 
 export type BusinessCategory = "food" | "tool" | "clothing" | "service";

@@ -1,5 +1,5 @@
 import { filesDir } from "../../middlewares/files";
-import { Image, QueryHandle } from "../../types";
+import { Image, QueryHandle } from "../../types/general";
 import fs from "fs";
 
 const deleteOne: QueryHandle<{
@@ -33,14 +33,15 @@ const deleteDir: QueryHandle<{
     path = `${path}${postId}/`;
   }
 
-  fs.rmdir(path, { recursive: true }, (err) => {
-    if (err) {
-      console.log("Some problem removing the folder");
-      // return res.status(400).json({
-      //   message: "Error deleting the folder",
-      // });
-    }
-  });
+  if (fs.existsSync(path)) {
+    fs.rmdir(path, { recursive: true }, (err) => {
+      if (err) {
+        return res.status(400).json({
+          message: "Error deleting the folder",
+        });
+      }
+    });
+  }
 };
 
 const deleteOldImages: QueryHandle<{

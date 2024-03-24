@@ -1,7 +1,7 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcrypt";
-import { UserModel } from "../features/user/schemas";
+import { UserModel } from "../schemas/user";
 import passportJWT from "passport-jwt";
 import { SECRET_ACCESS_TOKEN } from "../constants/auth";
 

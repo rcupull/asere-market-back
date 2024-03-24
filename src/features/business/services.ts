@@ -4,16 +4,16 @@ import {
   UpdateQuery,
   UpdateWithAggregationPipeline,
 } from "mongoose";
-import { QueryHandle } from "../../types";
-import { Business, BusinessCategory } from "./types";
-import { BusinessModel } from "./schemas";
+import { QueryHandle } from "../../types/general";
+import { Business, BusinessCategory } from "../../types/business";
+import { BusinessModel } from "../../schemas/business";
 import { postServices } from "../post/services";
 import {
   PaginateResult,
   paginationCustomLabels,
 } from "../../middlewares/pagination";
 import { ServerResponse } from "http";
-import { PostModel } from "../post/schemas";
+import { PostModel } from "../../schemas/post";
 
 interface GetAllArgs {
   paginateOptions?: PaginateOptions;

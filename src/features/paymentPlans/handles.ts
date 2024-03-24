@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { withTryCatch } from "../../utils/error";
 import { paymentPlans } from "../../constants/plans";
-import { PaymentPlanType } from "../../types";
+import { PaymentPlanType } from "../../types/general";
 
 const get_payment_plans: () => RequestHandler = () => {
   return (req, res) => {

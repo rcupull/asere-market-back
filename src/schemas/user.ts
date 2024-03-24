@@ -1,9 +1,9 @@
 import { PaginateModel, Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { SECRET_ACCESS_TOKEN } from "../../constants/auth";
-import { User } from "./types";
-import { createdAtSchemaDefinition } from "../../utils/schemas";
+import { SECRET_ACCESS_TOKEN } from "../constants/auth";
+import { User } from "../types/user";
+import { createdAtSchemaDefinition } from "../utils/schemas";
 import mongoosePaginate from "mongoose-paginate-v2";
 
 const UserSchema = new Schema<User>({
@@ -15,7 +15,11 @@ const UserSchema = new Schema<User>({
   role: { type: String, enum: ["user", "admin"], default: "user" },
   validated: { type: Boolean, default: false },
   profileImage: {
-    type: { src: { type: String, required: true } },
+    type: {
+      src: { type: String, required: true },
+      width: { type: Number, required: true },
+      height: { type: Number, required: true },
+    },
     default: null,
   },
   payment: {

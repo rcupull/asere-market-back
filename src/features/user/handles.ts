@@ -3,15 +3,15 @@ import { withTryCatch } from "../../utils/error";
 import { RequestWithPagination } from "../../middlewares/pagination";
 import { ServerResponse } from "http";
 import { businessServices } from "../business/services";
-import { Business } from "../business/types";
+import { Business } from "../../types/business";
 import { RequestWithUser } from "../../middlewares/verify";
 import { postServices } from "../post/services";
 import { paymentPlans } from "../../constants/plans";
 import { imagesServices } from "../images/services";
-import { Post } from "../post/types";
+import { Post } from "../../types/post";
 import { userServices } from "./services";
-import { User } from "./types";
-import { UserModel } from "./schemas";
+import { User } from "../../types/user";
+import { UserModel } from "../../schemas/user";
 
 const get_users_userId: () => RequestHandler = () => {
   return (req: RequestWithPagination, res) => {

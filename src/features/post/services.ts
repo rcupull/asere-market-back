@@ -1,7 +1,7 @@
 import { FilterQuery, PaginateOptions } from "mongoose";
-import { QueryHandle } from "../../types";
-import { PostModel } from "./schemas";
-import { Post } from "./types";
+import { QueryHandle } from "../../types/general";
+import { PostModel } from "../../schemas/post";
+import { Post } from "../../types/post";
 import {
   PaginateResult,
   paginationCustomLabels,

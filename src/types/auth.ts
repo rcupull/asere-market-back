@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { BaseIdentity } from "../../types";
+import { BaseIdentity } from "./general";
 
 export interface Session extends BaseIdentity {
   token: string;

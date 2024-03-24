@@ -29,5 +29,7 @@ export interface PaymentPlan {
 
 export interface Image {
   src: string;
+  width: number;
+  height: number;
   href?: string;
 }

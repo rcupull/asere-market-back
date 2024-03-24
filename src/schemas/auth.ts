@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
-import { Session, ValidationCode } from "./types";
-import { createdAtSchemaDefinition } from "../../utils/schemas";
+import { Session, ValidationCode } from "../types/auth";
+import { createdAtSchemaDefinition } from "../utils/schemas";
 
 const ValidationCodeShema = new Schema<ValidationCode>({
   ...createdAtSchemaDefinition,

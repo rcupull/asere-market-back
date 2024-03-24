@@ -1,7 +1,7 @@
 import { Request, RequestHandler, Response } from "express";
 import { withTryCatch } from "../utils/error";
-import { User } from "../features/user/types";
-import { AnyRecord } from "../types";
+import { User } from "../types/user";
+import { AnyRecord } from "../types/general";
 import { ServerResponse } from "http";
 import { postServices } from "../features/post/services";
 import { isEqualIds } from "../utils/general";

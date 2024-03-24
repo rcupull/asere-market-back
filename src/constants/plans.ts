@@ -1,4 +1,4 @@
-import { PaymentPlan, PaymentPlanType } from "../types";
+import { PaymentPlan, PaymentPlanType } from "../types/general";
 
 const freePlan: PaymentPlan = {
   type: "free",

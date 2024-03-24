@@ -4,7 +4,7 @@ import {
   RequestWithPagination,
   paginationCustomLabels,
 } from "../../middlewares/pagination";
-import { UserModel } from "../user/schemas";
+import { UserModel } from "../../schemas/user";
 import { imagesServices } from "../images/services";
 import { ServerResponse } from "http";
 
