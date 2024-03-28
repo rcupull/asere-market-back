@@ -25,6 +25,7 @@ export interface Post extends BaseIdentity {
   details?: string;
   name: string;
   price?: number;
+  discount?: number;
   currency?: PostCurrency;
   amountAvailable?: number;
   reviews?: PostReviews;

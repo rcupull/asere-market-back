@@ -173,6 +173,7 @@ const updateOne: QueryHandle<{
       | "name"
       | "reviews"
       | "postCategoriesTags"
+      | "discount"
     >
   >;
 }> = async ({ query, update }) => {
@@ -191,6 +192,7 @@ const updateOne: QueryHandle<{
     hidden,
     hiddenBusiness,
     postCategoriesTags,
+    discount,
   } = update;
 
   await PostModel.updateOne(query, {
@@ -208,6 +210,7 @@ const updateOne: QueryHandle<{
     hidden,
     hiddenBusiness,
     postCategoriesTags,
+    discount,
   });
 };
 

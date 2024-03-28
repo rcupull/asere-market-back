@@ -161,8 +161,8 @@ const updateOne: QueryHandle<{
             | "routeName"
             | "logo"
             | "layouts"
-            | "layoutsMobile"
             | "postCategories"
+            | "aboutUsPage"
             | "aboutUsPage"
           >
         >

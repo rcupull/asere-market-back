@@ -40,6 +40,7 @@ const PostSchema = new Schema<Post>({
   reviews: { type: [Number], default: [0, 0, 0, 0, 0] },
   name: { type: String, required: true },
   price: { type: Number },
+  discount: { type: Number },
 });
 
 PostSchema.plugin(mongoosePaginate);

@@ -3,11 +3,11 @@ import { Schema } from "mongoose";
 
 export type BusinessCategory = "food" | "tool" | "clothing" | "service";
 
-export type PostsLayoutType =
-  | "none"
+export type PostsLayoutSectionType =
   | "grid"
-  | "slicesHorizontal"
-  | "alternateSummary";
+  | "slicesHorizontal" // FUTURE
+  | "alternateSummary"; // FUTURE
+
 export type BannerLayoutType = "none" | "static" | "swipableClassic";
 export type SearchLayoutType =
   | "none"
@@ -21,8 +21,39 @@ export type SearchLayoutType =
 
 export type FooterLayoutType = "none" | "basic";
 
+export interface PostsLayoutSection {
+  name?: string;
+  hidden?: boolean;
+
+  showName?: boolean;
+  //
+  searchLayout?: SearchLayoutType;
+  showSearch?: boolean;
+  //
+  postCategoriesTags?: Array<string>;
+  showCategories?: boolean;
+  //
+  type: PostsLayoutSectionType;
+  postCardLayout?: PostCardLayout;
+}
 export interface PostsLayout {
-  type: PostsLayoutType;
+  sections?: Array<PostsLayoutSection>;
+}
+
+export type PostCardLayoutImages = "static" | "hoverZoom" | "slider" | "switch";
+export type PostCardLayoutName = "none" | "basic";
+export type PostCardLayoutPrice =
+  | "none"
+  | "basic"
+  | "smallerCurrency"
+  | "usdCurrencySymbol";
+export type PostCardLayoutDiscount = "none" | "savedPercent" | "savedMoney";
+
+export interface PostCardLayout {
+  images?: PostCardLayoutImages;
+  name?: PostCardLayoutName;
+  price?: PostCardLayoutPrice;
+  discount?: PostCardLayoutDiscount;
 }
 
 export interface BannerLayout {
@@ -40,7 +71,6 @@ export interface FooterLayout {
 export interface BusinessLayouts {
   posts?: PostsLayout;
   footer?: FooterLayout;
-  search?: SearchLayout;
   banner?: BannerLayout;
 }
 
@@ -73,6 +103,5 @@ export interface Business extends BaseIdentity {
     youtube?: string;
   };
   layouts?: BusinessLayouts;
-  layoutsMobile?: BusinessLayouts;
   aboutUsPage?: BusinessAboutUsPage;
 }

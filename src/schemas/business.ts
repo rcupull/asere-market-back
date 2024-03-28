@@ -3,6 +3,7 @@ import { Business } from "../types/business";
 import mongoosePaginate from "mongoose-paginate-v2";
 import { createdAtSchemaDefinition } from "../utils/schemas";
 import { PostModel } from "./post";
+import { PostCardLayoutSchema, PostLayoutSchema } from "./common";
 
 const BusinessSchema = new Schema<Business>({
   ...createdAtSchemaDefinition,
@@ -54,52 +55,8 @@ const BusinessSchema = new Schema<Business>({
         default: "static",
       },
     },
-    posts: {
-      type: {
-        type: String,
-        enum: ["none", "grid", "slicesHorizontal", "alternateSummary"],
-        default: "grid",
-      },
-    },
-    footer: {
-      type: {
-        type: String,
-        enum: ["none", "basic"],
-        default: "basic",
-      },
-    },
-    search: {
-      type: {
-        type: String,
-        enum: [
-          "none",
-          "left",
-          "center",
-          "right",
-          "postCategories",
-          "postCategoriesExcluded",
-          "postCategoriesScrollable",
-          "postCategoriesExcludedScrollable",
-        ],
-        default: "right",
-      },
-    },
-  },
-  layoutsMobile: {
-    banner: {
-      type: {
-        type: String,
-        enum: ["none", "static", "swipableClassic"],
-        default: "none",
-      },
-    },
-    posts: {
-      type: {
-        type: String,
-        enum: ["none", "grid", "slicesHorizontal", "alternateSummary"],
-        default: "none",
-      },
-    },
+    posts: PostLayoutSchema,
+    postCard: PostCardLayoutSchema,
     footer: {
       type: {
         type: String,
