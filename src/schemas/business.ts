@@ -3,7 +3,7 @@ import { Business } from "../types/business";
 import mongoosePaginate from "mongoose-paginate-v2";
 import { createdAtSchemaDefinition } from "../utils/schemas";
 import { PostModel } from "./post";
-import { PostCardLayoutSchema, PostLayoutSchema } from "./common";
+import { PostLayoutSchema } from "./common";
 
 const BusinessSchema = new Schema<Business>({
   ...createdAtSchemaDefinition,
@@ -55,8 +55,9 @@ const BusinessSchema = new Schema<Business>({
         default: "static",
       },
     },
-    posts: PostLayoutSchema,
-    postCard: PostCardLayoutSchema,
+    posts: {
+      type: PostLayoutSchema,
+    },
     footer: {
       type: {
         type: String,

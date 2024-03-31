@@ -15,7 +15,9 @@ const getAll: QueryHandle<
     hidden?: boolean;
     hiddenBusiness?: boolean;
     createdBy?: string;
+    //
     postCategoriesTags?: Array<string>;
+    postCategoriesMethod?: "some" | "every";
   },
   PaginateResult<Post>
 > = async ({
@@ -26,6 +28,7 @@ const getAll: QueryHandle<
   hidden,
   createdBy,
   postCategoriesTags,
+  postCategoriesMethod,
 }) => {
   const filterQuery: FilterQuery<Post> = {};
 
@@ -36,7 +39,20 @@ const getAll: QueryHandle<
   }
 
   if (postCategoriesTags) {
-    filterQuery.postCategoriesTags = { $all: postCategoriesTags };
+    switch (postCategoriesMethod) {
+      case "every": {
+        filterQuery.postCategoriesTags = { $all: postCategoriesTags };
+        break;
+      }
+      case "some": {
+        filterQuery.postCategoriesTags = { $in: postCategoriesTags };
+        break;
+      }
+      default: {
+        filterQuery.postCategoriesTags = { $all: postCategoriesTags };
+        break;
+      }
+    }
   }
 
   ///////////////////////////////////////////////////////////////////

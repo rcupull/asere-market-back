@@ -10,7 +10,8 @@ const get_posts: () => RequestHandler = () => {
       const { query, paginateOptions } =
         req as unknown as RequestWithPagination;
 
-      const { search, routeNames, postCategoriesTags } = query;
+      const { search, routeNames, postCategoriesTags, postCategoriesMethod } =
+        query;
 
       const out = await postServices.getAll({
         res,
@@ -20,6 +21,7 @@ const get_posts: () => RequestHandler = () => {
         hidden: false,
         hiddenBusiness: false,
         postCategoriesTags,
+        postCategoriesMethod,
       });
 
       if (out instanceof ServerResponse) return;

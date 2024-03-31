@@ -25,13 +25,11 @@ export interface PostsLayoutSection {
   name?: string;
   hidden?: boolean;
 
-  showName?: boolean;
+  hiddenName?: boolean;
   //
   searchLayout?: SearchLayoutType;
-  showSearch?: boolean;
   //
   postCategoriesTags?: Array<string>;
-  showCategories?: boolean;
   //
   type: PostsLayoutSectionType;
   postCardLayout?: PostCardLayout;
@@ -41,6 +39,7 @@ export interface PostsLayout {
 }
 
 export type PostCardLayoutImages = "static" | "hoverZoom" | "slider" | "switch";
+export type PostCardSize = "small" | "medium" | "long";
 export type PostCardLayoutName = "none" | "basic";
 export type PostCardLayoutPrice =
   | "none"
@@ -51,6 +50,7 @@ export type PostCardLayoutDiscount = "none" | "savedPercent" | "savedMoney";
 
 export interface PostCardLayout {
   images?: PostCardLayoutImages;
+  size?: PostCardSize;
   name?: PostCardLayoutName;
   price?: PostCardLayoutPrice;
   discount?: PostCardLayoutDiscount;

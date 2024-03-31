@@ -11,6 +11,11 @@ export const PostCardLayoutSchema = new Schema<PostCardLayout>({
     enum: ["static", "hoverZoom", "slider", "switch"],
     default: "static",
   },
+  size: {
+    type: String,
+    enum: ["small", "medium", "long"],
+    default: "medium",
+  },
   name: {
     type: String,
     enum: ["none", "basic"],
@@ -30,25 +35,37 @@ export const PostCardLayoutSchema = new Schema<PostCardLayout>({
 
 export const PostsLayoutSectionSchema = new Schema<PostsLayoutSection>({
   name: { type: String },
-  showName: { type: Boolean },
+  hiddenName: { type: Boolean, default: false },
   searchLayout: {
     type: String,
-    enum: [],
+    enum: [
+      "none",
+      "left",
+      "center",
+      "right",
+      "postCategories",
+      "postCategoriesScrollable",
+      "postCategoriesExcluded",
+      "postCategoriesExcludedScrollable",
+    ],
+    default: "none",
   },
-  showSearch: { type: Boolean },
-  //
   postCategoriesTags: { type: [String] },
-  showCategories: { type: Boolean },
-  hidden: { type: Boolean },
+  hidden: { type: Boolean, default: false },
   //
   type: {
     type: String,
     enum: ["grid", "slicesHorizontal", "alternateSummary"],
     default: "grid",
   },
-  postCardLayout: PostCardLayoutSchema,
+  postCardLayout: {
+    type: PostCardLayoutSchema,
+  },
 });
 
 export const PostLayoutSchema = new Schema<PostsLayout>({
-  sections: [PostsLayoutSectionSchema],
+  sections: {
+    type: [PostsLayoutSectionSchema],
+    default: [],
+  },
 });
