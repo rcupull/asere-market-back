@@ -19,6 +19,7 @@ export const PostCardLayoutSchema = new Schema<PostCardLayout>({
   name: {
     type: String,
     enum: ["none", "basic"],
+    required: true,
     default: "basic",
   },
   price: {
@@ -29,6 +30,11 @@ export const PostCardLayoutSchema = new Schema<PostCardLayout>({
   discount: {
     type: String,
     enum: ["none", "savedPercent", "savedMoney"],
+    default: "none",
+  },
+  whatsAppContact: {
+    type: String,
+    enum: ["none", "xsLink_lgQR"],
     default: "none",
   },
 });
@@ -51,11 +57,18 @@ export const PostsLayoutSectionSchema = new Schema<PostsLayoutSection>({
     default: "none",
   },
   postCategoriesTags: { type: [String] },
-  hidden: { type: Boolean, default: false },
-  //
+  showIn: {
+    type: [
+      {
+        type: String,
+        enum: ["businessPage", "postPage"],
+      },
+    ],
+    default: [],
+  },
   type: {
     type: String,
-    enum: ["grid", "slicesHorizontal", "alternateSummary"],
+    enum: ["grid", "oneRowSlider"],
     default: "grid",
   },
   postCardLayout: {

@@ -41,6 +41,7 @@ const PostSchema = new Schema<Post>({
   name: { type: String, required: true },
   price: { type: Number },
   discount: { type: Number },
+  postsSectionsBelowIds: { type: [String] },
 });
 
 PostSchema.plugin(mongoosePaginate);

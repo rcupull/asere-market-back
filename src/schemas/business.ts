@@ -87,6 +87,7 @@ const BusinessSchema = new Schema<Business>({
     title: { type: String },
     description: { type: String },
   },
+  whatsAppPhoneNumber: { type: String },
 });
 
 BusinessSchema.plugin(mongoosePaginate);

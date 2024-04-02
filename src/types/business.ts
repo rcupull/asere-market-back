@@ -3,10 +3,7 @@ import { Schema } from "mongoose";
 
 export type BusinessCategory = "food" | "tool" | "clothing" | "service";
 
-export type PostsLayoutSectionType =
-  | "grid"
-  | "slicesHorizontal" // FUTURE
-  | "alternateSummary"; // FUTURE
+export type PostsLayoutSectionType = "grid" | "oneRowSlider";
 
 export type BannerLayoutType = "none" | "static" | "swipableClassic";
 export type SearchLayoutType =
@@ -22,8 +19,8 @@ export type SearchLayoutType =
 export type FooterLayoutType = "none" | "basic";
 
 export interface PostsLayoutSection {
-  name?: string;
-  hidden?: boolean;
+  name: string;
+  showIn?: Array<"businessPage" | "postPage">;
 
   hiddenName?: boolean;
   //
@@ -47,6 +44,7 @@ export type PostCardLayoutPrice =
   | "smallerCurrency"
   | "usdCurrencySymbol";
 export type PostCardLayoutDiscount = "none" | "savedPercent" | "savedMoney";
+export type PostCardLayoutWhatsAppContact = "none" | "xsLink_lgQR";
 
 export interface PostCardLayout {
   images?: PostCardLayoutImages;
@@ -54,6 +52,7 @@ export interface PostCardLayout {
   name?: PostCardLayoutName;
   price?: PostCardLayoutPrice;
   discount?: PostCardLayoutDiscount;
+  whatsAppContact?: PostCardLayoutWhatsAppContact;
 }
 
 export interface BannerLayout {
@@ -104,4 +103,5 @@ export interface Business extends BaseIdentity {
   };
   layouts?: BusinessLayouts;
   aboutUsPage?: BusinessAboutUsPage;
+  whatsAppPhoneNumber?: string;
 }
