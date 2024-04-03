@@ -1,9 +1,24 @@
-import { Schema } from "mongoose";
+import {
+  ApplySchemaOptions,
+  DefaultSchemaOptions,
+  ObtainDocumentType,
+  ResolveSchemaOptions,
+  Schema,
+  SchemaDefinitionType,
+} from "mongoose";
 import {
   PostCardLayout,
+  PostLayoutContact,
+  PostPageLayout,
   PostsLayout,
   PostsLayoutSection,
 } from "../types/business";
+import { SchemaDefinition } from "../types/general";
+
+const PostLayoutContactDefinition: SchemaDefinition<PostLayoutContact> = {
+  type: String,
+  enum: ["none", "whatsApp_xsLink_lgQR"],
+};
 
 export const PostCardLayoutSchema = new Schema<PostCardLayout>({
   images: {
@@ -32,11 +47,11 @@ export const PostCardLayoutSchema = new Schema<PostCardLayout>({
     enum: ["none", "savedPercent", "savedMoney"],
     default: "none",
   },
-  whatsAppContact: {
-    type: String,
-    enum: ["none", "xsLink_lgQR"],
-    default: "none",
-  },
+  contact: PostLayoutContactDefinition,
+});
+
+export const PostPageLayoutSchema = new Schema<PostPageLayout>({
+  contact: PostLayoutContactDefinition,
 });
 
 export const PostsLayoutSectionSchema = new Schema<PostsLayoutSection>({

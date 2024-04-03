@@ -3,6 +3,7 @@ import { Post } from "../types/post";
 import mongoosePaginate from "mongoose-paginate-v2";
 import { createdAtSchemaDefinition } from "../utils/schemas";
 import { BusinessModel } from "./business";
+import { PostPageLayoutSchema } from "./common";
 
 const PostSchema = new Schema<Post>({
   ...createdAtSchemaDefinition,
@@ -42,6 +43,9 @@ const PostSchema = new Schema<Post>({
   price: { type: Number },
   discount: { type: Number },
   postsSectionsBelowIds: { type: [String] },
+  postPageLayout: {
+    type: PostPageLayoutSchema,
+  },
 });
 
 PostSchema.plugin(mongoosePaginate);

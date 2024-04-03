@@ -1,6 +1,12 @@
 import { Response } from "express";
 import { ServerResponse } from "http";
-import { Schema } from "mongoose";
+import {
+  ApplySchemaOptions,
+  DefaultSchemaOptions,
+  ObtainDocumentType,
+  ResolveSchemaOptions,
+  Schema,
+} from "mongoose";
 
 export type AnyRecord = Record<string, any>;
 
@@ -33,3 +39,8 @@ export interface Image {
   height: number;
   href?: string;
 }
+
+export type SchemaDefinition<Type = any> = ApplySchemaOptions<
+  ObtainDocumentType<any, Type, ResolveSchemaOptions<DefaultSchemaOptions>>,
+  ResolveSchemaOptions<DefaultSchemaOptions>
+>;

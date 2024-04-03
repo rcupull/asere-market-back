@@ -35,6 +35,10 @@ export interface PostsLayout {
   sections?: Array<PostsLayoutSection>;
 }
 
+export interface PostPageLayout {
+  contact?: PostLayoutContact;
+}
+
 export type PostCardLayoutImages = "static" | "hoverZoom" | "slider" | "switch";
 export type PostCardSize = "small" | "medium" | "long";
 export type PostCardLayoutName = "none" | "basic";
@@ -44,7 +48,7 @@ export type PostCardLayoutPrice =
   | "smallerCurrency"
   | "usdCurrencySymbol";
 export type PostCardLayoutDiscount = "none" | "savedPercent" | "savedMoney";
-export type PostCardLayoutWhatsAppContact = "none" | "xsLink_lgQR";
+export type PostLayoutContact = "none" | "whatsApp_xsLink_lgQR";
 
 export interface PostCardLayout {
   images?: PostCardLayoutImages;
@@ -52,7 +56,7 @@ export interface PostCardLayout {
   name?: PostCardLayoutName;
   price?: PostCardLayoutPrice;
   discount?: PostCardLayoutDiscount;
-  whatsAppContact?: PostCardLayoutWhatsAppContact;
+  contact?: PostLayoutContact;
 }
 
 export interface BannerLayout {

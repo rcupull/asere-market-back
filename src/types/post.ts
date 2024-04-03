@@ -1,5 +1,6 @@
 import { Schema } from "mongoose";
 import { BaseIdentity, Image } from "./general";
+import { PostPageLayout } from "./business";
 
 export type PostCurrency = "CUP" | "MLC" | "USD";
 
@@ -38,4 +39,6 @@ export interface Post extends BaseIdentity {
   clothingSizes?: Array<PostClothingSize>;
   //
   postsSectionsBelowIds?: Array<string>;
+  //
+  postPageLayout?: PostPageLayout;
 }

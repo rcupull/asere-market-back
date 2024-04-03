@@ -159,6 +159,7 @@ const addOne: QueryHandle<
     | "highlights"
     | "createdBy"
     | "postsSectionsBelowIds"
+    | "postPageLayout"
   >,
   Post
 > = async (args) => {
@@ -192,6 +193,7 @@ const updateOne: QueryHandle<{
       | "postCategoriesTags"
       | "discount"
       | "postsSectionsBelowIds"
+      | "postPageLayout"
     >
   >;
 }> = async ({ query, update }) => {
@@ -212,6 +214,7 @@ const updateOne: QueryHandle<{
     postCategoriesTags,
     discount,
     postsSectionsBelowIds,
+    postPageLayout,
   } = update;
 
   await PostModel.updateOne(query, {
@@ -231,6 +234,7 @@ const updateOne: QueryHandle<{
     postCategoriesTags,
     discount,
     postsSectionsBelowIds,
+    postPageLayout,
   });
 };
 
