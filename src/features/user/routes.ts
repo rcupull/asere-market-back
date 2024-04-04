@@ -153,7 +153,6 @@ router
     validators.param("userId").notEmpty(),
     validators.body("routeName").notEmpty(),
     validators.body("name").notEmpty(),
-    validators.body("description").notEmpty(),
     validators.handle,
     verifyUser,
     userHandles.post_users_userId_posts()
@@ -182,6 +181,16 @@ router
     validators.handle,
     verifyUser,
     userHandles.delete_users_userId_posts_postId()
+  );
+
+router
+  .route("/user/:userId/posts/:postId/duplicate")
+  .post(
+    validators.param("userId").notEmpty(),
+    validators.param("postId").notEmpty(),
+    validators.handle,
+    verifyUser,
+    userHandles.post_users_userId_posts_postId_duplicate()
   );
 /////////////////////////////////////////////////////////////////
 

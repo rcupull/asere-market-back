@@ -114,7 +114,7 @@ const getOne: QueryHandle<
     });
   }
 
-  return out;
+  return out.toJSON();
 };
 
 const deleteMany: QueryHandle<{

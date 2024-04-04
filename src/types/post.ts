@@ -22,7 +22,7 @@ export interface Post extends BaseIdentity {
   images?: Array<Image>;
   routeName: string; // routeName from business
   createdBy: Schema.Types.ObjectId;
-  description: string;
+  description?: string;
   details?: string;
   name: string;
   price?: number;

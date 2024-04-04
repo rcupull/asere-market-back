@@ -12,6 +12,7 @@ import { Post } from "../../types/post";
 import { userServices } from "./services";
 import { User } from "../../types/user";
 import { UserModel } from "../../schemas/user";
+import { PostModel } from "../../schemas/post";
 
 const get_users_userId: () => RequestHandler = () => {
   return (req: RequestWithPagination, res) => {
@@ -230,7 +231,8 @@ const get_users_userId_posts: () => RequestHandler = () => {
 
       const { userId } = params;
 
-      const { search, routeNames } = query;
+      const { search, routeNames, postCategoriesTags, postCategoriesMethod } =
+        query;
 
       const out = await postServices.getAll({
         res,
@@ -238,6 +240,8 @@ const get_users_userId_posts: () => RequestHandler = () => {
         routeNames,
         search,
         createdBy: userId,
+        postCategoriesTags,
+        postCategoriesMethod,
       });
 
       if (out instanceof ServerResponse) return;
@@ -263,6 +267,33 @@ const post_users_userId_posts: () => RequestHandler = () => {
       if (out instanceof ServerResponse) return;
 
       res.send(out);
+    });
+  };
+};
+
+const post_users_userId_posts_postId_duplicate: () => RequestHandler = () => {
+  return (req, res, next) => {
+    withTryCatch(req, res, async () => {
+      const { params } = req;
+
+      const { postId } = params;
+
+      const post = await postServices.getOne({
+        postId,
+        res,
+      });
+
+      if (post instanceof ServerResponse) return post;
+
+      //these are omitted fields
+      const { _id, createdAt, createdBy, reviews, images, ...propsToUse } =
+        post;
+
+      req.body = propsToUse;
+
+      // add new post
+      //TODO it show be created next to the current post
+      return post_users_userId_posts()(req, res, next);
     });
   };
 };
@@ -415,6 +446,8 @@ export const userHandles = {
   get_users_userId_posts_postId,
   put_users_userId_posts_postId,
   delete_users_userId_posts_postId,
+  //
+  post_users_userId_posts_postId_duplicate,
   //
   get_users_userId_payment_plan,
   post_users_userId_payment_plan_purchase,
