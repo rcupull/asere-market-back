@@ -13,7 +13,7 @@ import {
   paginationCustomLabels,
 } from "../../middlewares/pagination";
 import { ServerResponse } from "http";
-import { PostModel } from "../../schemas/post";
+import { imagesServices } from "../images/services";
 
 interface GetAllArgs {
   paginateOptions?: PaginateOptions;
@@ -131,13 +131,22 @@ const deleteOne: QueryHandle<{
   routeName: string;
   userId: string;
 }> = async ({ routeName, res, userId }) => {
+  /**
+   * Remove all business images
+   */
+  await imagesServices.deleteDir({
+    res,
+    userId,
+    routeName,
+  });
+
   await BusinessModel.deleteOne({
     routeName,
     createdBy: userId,
   });
 
   const out = await postServices.deleteMany({
-    routeNames: [routeName],
+    routeName,
     res,
     userId,
   });

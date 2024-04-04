@@ -6,21 +6,22 @@ import {
   PaginateResult,
   paginationCustomLabels,
 } from "../../middlewares/pagination";
+import { imagesServices } from "../images/services";
+import { ServerResponse } from "http";
 
-const getAll: QueryHandle<
-  {
-    paginateOptions?: PaginateOptions;
-    routeNames?: Array<string>;
-    search?: string;
-    hidden?: boolean;
-    hiddenBusiness?: boolean;
-    createdBy?: string;
-    //
-    postCategoriesTags?: Array<string>;
-    postCategoriesMethod?: "some" | "every";
-  },
-  PaginateResult<Post>
-> = async ({
+interface GetAllArgs {
+  paginateOptions?: PaginateOptions;
+  routeNames?: Array<string>;
+  search?: string;
+  hidden?: boolean;
+  hiddenBusiness?: boolean;
+  createdBy?: string;
+  //
+  postCategoriesTags?: Array<string>;
+  postCategoriesMethod?: "some" | "every";
+}
+
+const getAll: QueryHandle<GetAllArgs, PaginateResult<Post>> = async ({
   paginateOptions = {},
   routeNames,
   search,
@@ -89,6 +90,21 @@ const getAll: QueryHandle<
   return out as unknown as PaginateResult<Post>;
 };
 
+const getAllWithOutPagination: QueryHandle<GetAllArgs, Array<Post>> = async (
+  args
+) => {
+  const out = await getAll({
+    ...args,
+    paginateOptions: {
+      pagination: false,
+    },
+  });
+
+  if (out instanceof ServerResponse) return out;
+
+  return out.data;
+};
+
 const getOne: QueryHandle<
   {
     postId: string;
@@ -118,29 +134,57 @@ const getOne: QueryHandle<
 };
 
 const deleteMany: QueryHandle<{
-  routeNames?: Array<string>;
-  ids?: Array<string>;
+  routeName: string;
+  postIds?: Array<string>;
   userId: string;
-}> = async ({ routeNames, ids, res, userId }) => {
-  if (!routeNames?.length && !ids?.length) {
-    return res.status(404).json({
-      message: "businessId or ids are required",
+}> = async ({ res, routeName, userId, postIds: postIdsT }) => {
+  let postIds: Array<string> = postIdsT || [];
+
+  if (!postIds.length) {
+    const allPost = await PostModel.find({
+      routeName,
+      createdBy: userId,
     });
+
+    postIds = allPost.map((post) => post._id);
   }
 
-  const filterQuery: FilterQuery<Post> = {};
+  if (postIds?.length) {
+    const promises = postIds.map((postId) => {
+      return deleteOne({
+        res,
+        userId,
+        postId,
+        routeName,
+      });
+    });
 
-  if (routeNames?.length) {
-    filterQuery.routeName = { $in: routeNames };
+    await Promise.all(promises);
   }
+};
 
-  if (ids?.length) {
-    filterQuery._id = { $in: ids };
-  }
+const deleteOne: QueryHandle<{
+  routeName: string;
+  postId: string;
+  userId: string;
+}> = async ({ routeName, postId, res, userId }) => {
+  /**
+   * Remove all images of post
+   */
+  await imagesServices.deleteDir({
+    res,
+    userId,
+    postId,
+    routeName,
+  });
 
-  filterQuery.createdBy = userId;
-
-  await PostModel.deleteMany(filterQuery);
+  /**
+   * Removing the post
+   */
+  await PostModel.deleteOne({
+    _id: postId,
+    createdBy: userId,
+  });
 };
 
 const addOne: QueryHandle<
@@ -241,7 +285,9 @@ const updateOne: QueryHandle<{
 export const postServices = {
   deleteMany,
   getAll,
+  getAllWithOutPagination,
   addOne,
   getOne,
   updateOne,
+  deleteOne,
 };

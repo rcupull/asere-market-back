@@ -213,3 +213,14 @@ router
     verifyUser,
     userHandles.post_users_userId_payment_plan_purchase()
   );
+
+/////////////////////////////////////////////////////////////////
+
+router
+  .route("/user/:userId/business/:routeName/bulkActions/posts")
+  .delete(
+    validators.param("userId").notEmpty(),
+    validators.param("routeName").notEmpty(),
+    validators.handle,
+    userHandles.delete_users_userId_business_routeName_bulkActions_posts()
+  );

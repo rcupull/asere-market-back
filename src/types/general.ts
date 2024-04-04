@@ -11,7 +11,7 @@ import {
 export type AnyRecord = Record<string, any>;
 
 export interface BaseIdentity {
-  _id: Schema.Types.ObjectId;
+  _id: string;
   createdAt: string;
 }
 

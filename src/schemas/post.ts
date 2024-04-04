@@ -10,7 +10,7 @@ const PostSchema = new Schema<Post>({
   routeName: { type: String, required: true },
   amountAvailable: { type: Number },
   currency: { type: String, enum: ["CUP", "MLC", "USD"] },
-  description: { type: String, required: true },
+  description: { type: String },
   details: { type: String },
   hidden: { type: Boolean, default: false },
   hiddenBusiness: { type: Boolean, default: false },

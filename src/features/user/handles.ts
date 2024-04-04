@@ -1,4 +1,4 @@
-import { Request, RequestHandler } from "express";
+import { Request, RequestHandler, Response } from "express";
 import { withTryCatch } from "../../utils/error";
 import { RequestWithPagination } from "../../middlewares/pagination";
 import { ServerResponse } from "http";
@@ -197,15 +197,6 @@ const delete_users_userId_business_routeName: () => RequestHandler = () => {
 
       const { routeName, userId } = params;
 
-      /**
-       * Remove all business images
-       */
-      await imagesServices.deleteDir({
-        res,
-        userId,
-        routeName,
-      });
-
       const out = await businessServices.deleteOne({
         res,
         routeName,
@@ -365,25 +356,16 @@ const delete_users_userId_posts_postId: () => RequestHandler = () => {
       if (currentPost instanceof ServerResponse) return currentPost;
 
       /**
-       * Remove all images post
-       */
-      await imagesServices.deleteDir({
-        res,
-        userId,
-        postId,
-        routeName: currentPost.routeName,
-      });
-
-      /**
        * Removing the post
        */
-      const out = await postServices.deleteMany({
+      const out = await postServices.deleteOne({
         res,
-        ids: [postId],
+        postId,
+        routeName: currentPost.routeName,
         userId,
       });
 
-      if (out instanceof ServerResponse) return;
+      if (out instanceof ServerResponse) return out;
 
       res.send(out);
     });
@@ -430,6 +412,56 @@ const post_users_userId_payment_plan_purchase: () => RequestHandler = () => {
   };
 };
 
+const delete_users_userId_business_routeName_bulkActions_posts: () => RequestHandler =
+  () => {
+    return (req, res) => {
+      withTryCatch(req, res, async () => {
+        const { params, body } = req;
+
+        const { userId, routeName } = params;
+        const { ids, all } = body;
+
+        let postIds: Array<string> = ids || [];
+
+        if (postIds.length) {
+          // delete selected posts
+          const promises = postIds.map((id) => {
+            return postServices.deleteOne({
+              res,
+              userId,
+              postId: id,
+              routeName,
+            });
+          });
+
+          await Promise.all(promises);
+        }
+
+        if (all) {
+          const posts = await postServices.getAllWithOutPagination({
+            res,
+            createdBy: userId,
+          });
+
+          if (posts instanceof ServerResponse) return posts;
+
+          const promises = posts.map((post) => {
+            return postServices.deleteOne({
+              res,
+              userId,
+              postId: post._id,
+              routeName,
+            });
+          });
+
+          await Promise.all(promises);
+        }
+
+        res.send();
+      });
+    };
+  };
+
 export const userHandles = {
   get_users_userId,
   put_users_userId,
@@ -451,4 +483,6 @@ export const userHandles = {
   //
   get_users_userId_payment_plan,
   post_users_userId_payment_plan_purchase,
+  // bulk actions
+  delete_users_userId_business_routeName_bulkActions_posts,
 };
