@@ -440,6 +440,7 @@ const delete_users_userId_business_routeName_bulkActions_posts: () => RequestHan
         if (all) {
           const posts = await postServices.getAllWithOutPagination({
             res,
+            routeNames: [routeName],
             createdBy: userId,
           });
 
@@ -461,7 +462,53 @@ const delete_users_userId_business_routeName_bulkActions_posts: () => RequestHan
       });
     };
   };
+const put_users_userId_business_routeName_bulkActions_posts: () => RequestHandler =
+  () => {
+    return (req, res) => {
+      withTryCatch(req, res, async () => {
+        const { params, body } = req;
 
+        const { userId, routeName } = params;
+        const { ids, all, update } = body;
+
+        const { hidden } = update || {};
+
+        let postIds: Array<string> = ids || [];
+
+        if (!postIds.length && all) {
+          // get all posts
+          const posts = await postServices.getAllWithOutPagination({
+            res,
+            routeNames: [routeName],
+            createdBy: userId,
+          });
+
+          if (posts instanceof ServerResponse) return posts;
+
+          postIds = posts.map((post) => post._id);
+        }
+
+        // update the posts
+        if (postIds.length) {
+          const promises = postIds.map((id) => {
+            return postServices.updateOne({
+              res,
+              query: {
+                _id: id,
+              },
+              update: {
+                hidden,
+              },
+            });
+          });
+
+          await Promise.all(promises);
+        }
+
+        res.send();
+      });
+    };
+  };
 export const userHandles = {
   get_users_userId,
   put_users_userId,
@@ -485,4 +532,5 @@ export const userHandles = {
   post_users_userId_payment_plan_purchase,
   // bulk actions
   delete_users_userId_business_routeName_bulkActions_posts,
+  put_users_userId_business_routeName_bulkActions_posts,
 };

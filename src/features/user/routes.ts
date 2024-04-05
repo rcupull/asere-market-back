@@ -218,6 +218,13 @@ router
 
 router
   .route("/user/:userId/business/:routeName/bulkActions/posts")
+  .put(
+    validators.param("userId").notEmpty(),
+    validators.param("routeName").notEmpty(),
+    validators.body("update").notEmpty(),
+    validators.handle,
+    userHandles.put_users_userId_business_routeName_bulkActions_posts()
+  )
   .delete(
     validators.param("userId").notEmpty(),
     validators.param("routeName").notEmpty(),
