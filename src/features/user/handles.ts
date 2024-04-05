@@ -5,7 +5,7 @@ import { ServerResponse } from "http";
 import { businessServices } from "../business/services";
 import { Business } from "../../types/business";
 import { RequestWithUser } from "../../middlewares/verify";
-import { postServices } from "../post/services";
+import { GetAllArgs, postServices } from "../post/services";
 import { paymentPlans } from "../../constants/plans";
 import { imagesServices } from "../images/services";
 import { Post } from "../../types/post";
@@ -13,6 +13,7 @@ import { userServices } from "./services";
 import { User } from "../../types/user";
 import { UserModel } from "../../schemas/user";
 import { PostModel } from "../../schemas/post";
+import { isEmpty } from "../../utils/general";
 
 const get_users_userId: () => RequestHandler = () => {
   return (req: RequestWithPagination, res) => {
@@ -419,25 +420,50 @@ const delete_users_userId_business_routeName_bulkActions_posts: () => RequestHan
         const { params, body } = req;
 
         const { userId, routeName } = params;
-        const { ids, all } = body;
+        const { ids, query } = body as {
+          ids?: Array<string>;
+          all?: boolean;
+          query?: Pick<
+            GetAllArgs,
+            "postCategoriesMethod" | "postCategoriesTags" | "search"
+          >;
+        };
 
-        let postIds: Array<string> = ids || [];
-
-        if (postIds.length) {
+        if (ids?.length) {
           // delete selected posts
-          const promises = postIds.map((id) => {
-            return postServices.deleteOne({
-              res,
-              userId,
-              postId: id,
-              routeName,
-            });
+
+          const out = await postServices.deleteMany({
+            res,
+            userId,
+            postIds: ids,
+            routeName,
           });
 
-          await Promise.all(promises);
-        }
+          if (out instanceof ServerResponse) return out;
+        } else if (!isEmpty(query)) {
+          const { postCategoriesMethod, postCategoriesTags, search } = query;
 
-        if (all) {
+          const posts = await postServices.getAllWithOutPagination({
+            res,
+            routeNames: [routeName],
+            createdBy: userId,
+            postCategoriesMethod,
+            postCategoriesTags,
+            search,
+          });
+
+          if (posts instanceof ServerResponse) return posts;
+
+          const out = await postServices.deleteMany({
+            res,
+            userId,
+            postIds: posts.map(({ _id }) => _id),
+            routeName,
+          });
+
+          if (out instanceof ServerResponse) return out;
+        } else {
+          // get all post
           const posts = await postServices.getAllWithOutPagination({
             res,
             routeNames: [routeName],
@@ -446,16 +472,14 @@ const delete_users_userId_business_routeName_bulkActions_posts: () => RequestHan
 
           if (posts instanceof ServerResponse) return posts;
 
-          const promises = posts.map((post) => {
-            return postServices.deleteOne({
-              res,
-              userId,
-              postId: post._id,
-              routeName,
-            });
+          const out = await postServices.deleteMany({
+            res,
+            userId,
+            postIds: posts.map(({ _id }) => _id),
+            routeName,
           });
 
-          await Promise.all(promises);
+          if (out instanceof ServerResponse) return out;
         }
 
         res.send();
@@ -469,13 +493,59 @@ const put_users_userId_business_routeName_bulkActions_posts: () => RequestHandle
         const { params, body } = req;
 
         const { userId, routeName } = params;
-        const { ids, all, update } = body;
+        const { ids, update, query } = body as {
+          ids?: Array<string>;
+          all?: boolean;
+          update: {
+            hidden?: boolean;
+          };
+          query?: Pick<
+            GetAllArgs,
+            "postCategoriesMethod" | "postCategoriesTags" | "search"
+          >;
+        };
 
         const { hidden } = update || {};
 
-        let postIds: Array<string> = ids || [];
+        if (ids?.length) {
+          const out = await postServices.updateMany({
+            res,
+            query: {
+              _id: { $in: ids },
+            },
+            update: {
+              hidden,
+            },
+          });
 
-        if (!postIds.length && all) {
+          if (out instanceof ServerResponse) return out;
+        } else if (!isEmpty(query)) {
+          // TODO esto puede ser mejorado en una sola quuery
+          const { postCategoriesMethod, postCategoriesTags, search } = query;
+
+          const posts = await postServices.getAllWithOutPagination({
+            res,
+            routeNames: [routeName],
+            createdBy: userId,
+            postCategoriesMethod,
+            postCategoriesTags,
+            search,
+          });
+
+          if (posts instanceof ServerResponse) return posts;
+
+          const out = await postServices.updateMany({
+            res,
+            query: {
+              _id: { $in: posts.map(({ _id }) => _id) },
+            },
+            update: {
+              hidden,
+            },
+          });
+
+          if (out instanceof ServerResponse) return out;
+        } else {
           // get all posts
           const posts = await postServices.getAllWithOutPagination({
             res,
@@ -485,24 +555,17 @@ const put_users_userId_business_routeName_bulkActions_posts: () => RequestHandle
 
           if (posts instanceof ServerResponse) return posts;
 
-          postIds = posts.map((post) => post._id);
-        }
-
-        // update the posts
-        if (postIds.length) {
-          const promises = postIds.map((id) => {
-            return postServices.updateOne({
-              res,
-              query: {
-                _id: id,
-              },
-              update: {
-                hidden,
-              },
-            });
+          const out = await postServices.updateMany({
+            res,
+            query: {
+              _id: { $in: posts.map(({ _id }) => _id) },
+            },
+            update: {
+              hidden,
+            },
           });
 
-          await Promise.all(promises);
+          if (out instanceof ServerResponse) return out;
         }
 
         res.send();

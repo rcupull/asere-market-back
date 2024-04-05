@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import { Schema } from "mongoose";
+import { EmptyObjectOf } from "../types/general";
 
 export const replaceAll = (
   value: string,
@@ -28,4 +29,17 @@ export const combineMiddleware = (...mids: Array<RequestHandler>) => {
       });
     };
   });
+};
+
+export const isEmpty = <T = object>(
+  value: T | null | undefined
+): value is EmptyObjectOf<T> | null | undefined => {
+  if (!value) return true;
+
+  if (typeof value === "object") {
+    const keys = Object.keys(value);
+    return !keys.length;
+  }
+
+  return false;
 };

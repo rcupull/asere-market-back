@@ -44,3 +44,8 @@ export type SchemaDefinition<Type = any> = ApplySchemaOptions<
   ObtainDocumentType<any, Type, ResolveSchemaOptions<DefaultSchemaOptions>>,
   ResolveSchemaOptions<DefaultSchemaOptions>
 >;
+
+type EmptyObject<T> = { [K in keyof T]?: never };
+export type EmptyObjectOf<T> = EmptyObject<T> extends T
+  ? EmptyObject<T>
+  : never;

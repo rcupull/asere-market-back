@@ -9,7 +9,7 @@ import {
 import { imagesServices } from "../images/services";
 import { ServerResponse } from "http";
 
-interface GetAllArgs {
+export interface GetAllArgs {
   paginateOptions?: PaginateOptions;
   routeNames?: Array<string>;
   search?: string;
@@ -20,6 +20,29 @@ interface GetAllArgs {
   postCategoriesTags?: Array<string>;
   postCategoriesMethod?: "some" | "every";
 }
+
+export type PostUpdate = Partial<
+  Pick<
+    Post,
+    | "currency"
+    | "description"
+    | "images"
+    | "price"
+    | "amountAvailable"
+    | "clothingSizes"
+    | "colors"
+    | "details"
+    | "highlights"
+    | "hidden"
+    | "hiddenBusiness"
+    | "name"
+    | "reviews"
+    | "postCategoriesTags"
+    | "discount"
+    | "postsSectionsBelowIds"
+    | "postPageLayout"
+  >
+>;
 
 const getAll: QueryHandle<GetAllArgs, PaginateResult<Post>> = async ({
   paginateOptions = {},
@@ -215,31 +238,8 @@ const addOne: QueryHandle<
 };
 
 const updateOne: QueryHandle<{
-  query: {
-    _id: string;
-  };
-  update: Partial<
-    Pick<
-      Post,
-      | "currency"
-      | "description"
-      | "images"
-      | "price"
-      | "amountAvailable"
-      | "clothingSizes"
-      | "colors"
-      | "details"
-      | "highlights"
-      | "hidden"
-      | "hiddenBusiness"
-      | "name"
-      | "reviews"
-      | "postCategoriesTags"
-      | "discount"
-      | "postsSectionsBelowIds"
-      | "postPageLayout"
-    >
-  >;
+  query: FilterQuery<Post>;
+  update: PostUpdate;
 }> = async ({ query, update }) => {
   const {
     amountAvailable,
@@ -282,6 +282,51 @@ const updateOne: QueryHandle<{
   });
 };
 
+const updateMany: QueryHandle<{
+  query: FilterQuery<Post>;
+  update: PostUpdate;
+}> = async ({ query, update }) => {
+  const {
+    amountAvailable,
+    clothingSizes,
+    colors,
+    details,
+    highlights,
+    images,
+    name,
+    price,
+    reviews,
+    currency,
+    description,
+    hidden,
+    hiddenBusiness,
+    postCategoriesTags,
+    discount,
+    postsSectionsBelowIds,
+    postPageLayout,
+  } = update;
+
+  await PostModel.updateMany(query, {
+    amountAvailable,
+    clothingSizes,
+    colors,
+    details,
+    highlights,
+    images,
+    name,
+    price,
+    reviews,
+    currency,
+    description,
+    hidden,
+    hiddenBusiness,
+    postCategoriesTags,
+    discount,
+    postsSectionsBelowIds,
+    postPageLayout,
+  });
+};
+
 export const postServices = {
   deleteMany,
   getAll,
@@ -289,5 +334,6 @@ export const postServices = {
   addOne,
   getOne,
   updateOne,
+  updateMany,
   deleteOne,
 };
