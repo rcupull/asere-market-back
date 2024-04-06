@@ -37,9 +37,16 @@ export interface PostsLayout {
 
 export interface PostPageLayout {
   contact?: PostLayoutContact;
+  postsSectionsBelowIds?: Array<string>;
 }
 
-export type PostCardLayoutImages = "static" | "hoverZoom" | "slider" | "switch";
+export type PostCardLayoutImages =
+  | "static"
+  | "hoverZoom"
+  | "slider"
+  | "switch"
+  | "rounded";
+
 export type PostCardSize = "small" | "medium" | "long";
 export type PostCardLayoutName = "none" | "basic";
 export type PostCardLayoutPrice =

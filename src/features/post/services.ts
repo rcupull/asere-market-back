@@ -39,7 +39,6 @@ export type PostUpdate = Partial<
     | "reviews"
     | "postCategoriesTags"
     | "discount"
-    | "postsSectionsBelowIds"
     | "postPageLayout"
   >
 >;
@@ -225,7 +224,6 @@ const addOne: QueryHandle<
     | "details"
     | "highlights"
     | "createdBy"
-    | "postsSectionsBelowIds"
     | "postPageLayout"
   >,
   Post
@@ -257,7 +255,6 @@ const updateOne: QueryHandle<{
     hiddenBusiness,
     postCategoriesTags,
     discount,
-    postsSectionsBelowIds,
     postPageLayout,
   } = update;
 
@@ -277,7 +274,6 @@ const updateOne: QueryHandle<{
     hiddenBusiness,
     postCategoriesTags,
     discount,
-    postsSectionsBelowIds,
     postPageLayout,
   });
 };
@@ -302,7 +298,6 @@ const updateMany: QueryHandle<{
     hiddenBusiness,
     postCategoriesTags,
     discount,
-    postsSectionsBelowIds,
     postPageLayout,
   } = update;
 
@@ -322,7 +317,6 @@ const updateMany: QueryHandle<{
     hiddenBusiness,
     postCategoriesTags,
     discount,
-    postsSectionsBelowIds,
     postPageLayout,
   });
 };

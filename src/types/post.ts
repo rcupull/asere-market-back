@@ -38,7 +38,5 @@ export interface Post extends BaseIdentity {
   // clothing
   clothingSizes?: Array<PostClothingSize>;
   //
-  postsSectionsBelowIds?: Array<string>;
-  //
   postPageLayout?: PostPageLayout;
 }

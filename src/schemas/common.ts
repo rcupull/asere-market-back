@@ -1,11 +1,4 @@
-import {
-  ApplySchemaOptions,
-  DefaultSchemaOptions,
-  ObtainDocumentType,
-  ResolveSchemaOptions,
-  Schema,
-  SchemaDefinitionType,
-} from "mongoose";
+import { Schema } from "mongoose";
 import {
   PostCardLayout,
   PostLayoutContact,
@@ -23,7 +16,7 @@ const PostLayoutContactDefinition: SchemaDefinition<PostLayoutContact> = {
 export const PostCardLayoutSchema = new Schema<PostCardLayout>({
   images: {
     type: String,
-    enum: ["static", "hoverZoom", "slider", "switch"],
+    enum: ["static", "hoverZoom", "slider", "switch", "rounded"],
     default: "static",
   },
   size: {
@@ -52,6 +45,7 @@ export const PostCardLayoutSchema = new Schema<PostCardLayout>({
 
 export const PostPageLayoutSchema = new Schema<PostPageLayout>({
   contact: PostLayoutContactDefinition,
+  postsSectionsBelowIds: { type: [String] },
 });
 
 export const PostsLayoutSectionSchema = new Schema<PostsLayoutSection>({
