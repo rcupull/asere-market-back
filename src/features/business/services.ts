@@ -18,14 +18,15 @@ import { imagesServices } from "../images/services";
 interface GetAllArgs {
   paginateOptions?: PaginateOptions;
   createdBy?: string;
-  routeName?: string;
+  routeNames?: Array<string>;
   search?: string;
   hidden?: boolean;
 }
+
 const getAll: QueryHandle<GetAllArgs, PaginateResult<Business>> = async (
   query
 ) => {
-  const { paginateOptions = {}, createdBy, routeName, search, hidden } = query;
+  const { paginateOptions = {}, createdBy, routeNames, search, hidden } = query;
   const filterQuery: FilterQuery<Business> = {};
 
   ///////////////////////////////////////////////////////////////////
@@ -34,8 +35,8 @@ const getAll: QueryHandle<GetAllArgs, PaginateResult<Business>> = async (
   }
   ///////////////////////////////////////////////////////////////////
 
-  if (routeName) {
-    filterQuery.routeName = routeName;
+  if (routeNames?.length) {
+    filterQuery.routeName = { $in: routeNames };
   }
   ///////////////////////////////////////////////////////////////////
 
@@ -49,10 +50,7 @@ const getAll: QueryHandle<GetAllArgs, PaginateResult<Business>> = async (
   }
   ///////////////////////////////////////////////////////////////////
 
-  const out = await BusinessModel.paginate(filterQuery, {
-    ...paginateOptions,
-    customLabels: paginationCustomLabels,
-  });
+  const out = await BusinessModel.paginate(filterQuery, paginateOptions);
 
   return out as unknown as PaginateResult<Business>;
 };
@@ -65,6 +63,7 @@ const getAllWithoutPagination: QueryHandle<
     ...args,
     paginateOptions: {
       pagination: false,
+      customLabels: paginationCustomLabels,
     },
   });
 

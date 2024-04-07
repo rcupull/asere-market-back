@@ -1,9 +1,6 @@
 import { RequestHandler } from "express";
 import { withTryCatch } from "../../utils/error";
-import {
-  RequestWithPagination,
-  paginationCustomLabels,
-} from "../../middlewares/pagination";
+import { RequestWithPagination } from "../../middlewares/pagination";
 import { UserModel } from "../../schemas/user";
 import { imagesServices } from "../images/services";
 import { ServerResponse } from "http";
@@ -17,10 +14,7 @@ const get_users: () => RequestHandler = () => {
         {
           role: "user",
         },
-        {
-          ...paginateOptions,
-          customLabels: paginationCustomLabels,
-        }
+        paginateOptions
       );
 
       res.send(out);

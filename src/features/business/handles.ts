@@ -12,12 +12,12 @@ const get_business: () => RequestHandler = () => {
       const { paginateOptions, query } =
         req as unknown as RequestWithPagination;
 
-      const { routeName, search } = query;
+      const { routeNames, search } = query;
 
       const out = await businessServices.getAll({
         res,
         paginateOptions,
-        routeName,
+        routeNames,
         search,
         hidden: false,
       });

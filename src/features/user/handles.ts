@@ -98,7 +98,7 @@ const get_users_userId_business: () => RequestHandler = () => {
         res,
         paginateOptions,
         createdBy: userId,
-        routeName,
+        routeNames: [routeName],
         search,
       });
 

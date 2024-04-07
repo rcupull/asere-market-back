@@ -2,10 +2,7 @@ import { FilterQuery, PaginateOptions } from "mongoose";
 import { QueryHandle } from "../../types/general";
 import { PostModel } from "../../schemas/post";
 import { Post } from "../../types/post";
-import {
-  PaginateResult,
-  paginationCustomLabels,
-} from "../../middlewares/pagination";
+import { PaginateResult } from "../../middlewares/pagination";
 import { imagesServices } from "../images/services";
 import { ServerResponse } from "http";
 
@@ -104,10 +101,7 @@ const getAll: QueryHandle<GetAllArgs, PaginateResult<Post>> = async ({
 
   ///////////////////////////////////////////////////////////////////
 
-  const out = await PostModel.paginate(filterQuery, {
-    ...paginateOptions,
-    customLabels: paginationCustomLabels,
-  });
+  const out = await PostModel.paginate(filterQuery, paginateOptions);
 
   return out as unknown as PaginateResult<Post>;
 };
