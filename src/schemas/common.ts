@@ -24,6 +24,11 @@ export const PostCardLayoutSchema = new Schema<PostCardLayout>({
     enum: ["small", "medium", "long"],
     default: "medium",
   },
+  metaLayout: {
+    type: String,
+    enum: ["basic", "verticalCentered"],
+    default: "basic",
+  },
   name: {
     type: String,
     enum: ["none", "basic"],

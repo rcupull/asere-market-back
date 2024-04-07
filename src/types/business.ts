@@ -56,10 +56,12 @@ export type PostCardLayoutPrice =
   | "usdCurrencySymbol";
 export type PostCardLayoutDiscount = "none" | "savedPercent" | "savedMoney";
 export type PostLayoutContact = "none" | "whatsApp_xsLink_lgQR";
+export type PostCardLayoutMetaLayout = "basic" | "verticalCentered";
 
 export interface PostCardLayout {
   images?: PostCardLayoutImages;
   size?: PostCardSize;
+  metaLayout?: PostCardLayoutMetaLayout;
   name?: PostCardLayoutName;
   price?: PostCardLayoutPrice;
   discount?: PostCardLayoutDiscount;
