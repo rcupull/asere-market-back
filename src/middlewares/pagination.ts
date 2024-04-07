@@ -37,7 +37,9 @@ export const pagination: RequestHandler = (req, res, next) => {
 
   const parameters = new PaginationParameters(req);
 
-  const paginateOptions = parameters.getOptions();
+  let paginateOptions = parameters.getOptions();
+
+  paginateOptions.customLabels = paginationCustomLabels;
 
   //@ts-expect-error
   req["paginateOptions"] = paginateOptions;

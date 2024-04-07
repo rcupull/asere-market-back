@@ -92,13 +92,13 @@ const get_users_userId_business: () => RequestHandler = () => {
 
       const { userId } = params;
 
-      const { routeName, search } = query;
+      const { routeNames, search } = query;
 
       const out = await businessServices.getAll({
         res,
         paginateOptions,
         createdBy: userId,
-        routeNames: [routeName],
+        routeNames,
         search,
       });
 
