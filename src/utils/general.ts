@@ -1,7 +1,9 @@
 import { RequestHandler } from "express";
 import { Schema } from "mongoose";
-import { EmptyObjectOf } from "../types/general";
-
+import { AnyRecord, EmptyObjectOf } from "../types/general";
+import dlv from "dlv";
+import { dset } from "dset";
+import { Path } from "../types/paths";
 export const replaceAll = (
   value: string,
   match: string,
@@ -42,4 +44,19 @@ export const isEmpty = <T = object>(
   }
 
   return false;
+};
+
+export const get = <T extends AnyRecord = AnyRecord>(
+  obj: T,
+  path: Path<T>
+): any => {
+  return dlv(obj, path);
+};
+
+export const set = <T extends AnyRecord = AnyRecord>(
+  obj: T,
+  path: Path<T>,
+  value: any
+): void => {
+  dset(obj, path, value);
 };
