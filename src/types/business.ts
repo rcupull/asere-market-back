@@ -1,5 +1,5 @@
 import { BaseIdentity, Image } from "./general";
-import { Schema } from "mongoose";
+import mongose from "mongoose";
 
 export type BusinessCategory = "food" | "tool" | "clothing" | "service";
 
@@ -102,7 +102,7 @@ export interface Business extends BaseIdentity {
   name: string;
   routeName: string;
   category: BusinessCategory;
-  createdBy: Schema.Types.ObjectId; // userId
+  createdBy: mongose.Types.ObjectId; // userId
   hidden?: boolean;
   bannerImages?: Array<Image>;
   logo?: Image;

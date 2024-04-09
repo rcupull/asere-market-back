@@ -16,6 +16,7 @@ const UserSchema = new Schema<User>({
   validated: { type: Boolean, default: false },
   profileImage: {
     type: {
+      _id: false,
       src: { type: String, required: true },
       width: { type: Number, required: true },
       height: { type: Number, required: true },
@@ -26,6 +27,7 @@ const UserSchema = new Schema<User>({
     planHistory: {
       type: [
         {
+          _id: false,
           planType: {
             type: String,
             enum: ["free", "beginner", "professional", "company"],
