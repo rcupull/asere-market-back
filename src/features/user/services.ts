@@ -1,19 +1,26 @@
 import { QueryHandle } from "../../types/general";
 import { User } from "../../types/user";
 import { UserModel } from "../../schemas/user";
+import { get401Response, get404Response } from "../../utils/server-response";
 
 const addOne: QueryHandle<
   {
     email: string;
     password: string;
     name: string;
+    canCreateBusiness: boolean;
   },
   User
-> = async ({ email, res, password, name }) => {
+> = async ({ email, res, password, name, canCreateBusiness }) => {
   // Check if the email is already registered
   const existingUser = await UserModel.findOne({ email });
   if (existingUser) {
-    return res.status(401).json({ message: "Email already registered" });
+    return get401Response({
+      res,
+      json: {
+        message: "Email already registered",
+      },
+    });
   }
 
   // Create a new user
@@ -21,6 +28,7 @@ const addOne: QueryHandle<
     email,
     password,
     passwordVerbose: password,
+    canCreateBusiness,
     name,
   });
 
@@ -37,7 +45,12 @@ const getOne: QueryHandle<
 > = async ({ query, res }) => {
   const user = await UserModel.findOne(query);
   if (!user) {
-    return res.status(404).json({ message: "User not found" });
+    return get404Response({
+      res,
+      json: {
+        message: "User not found",
+      },
+    });
   }
 
   return user;

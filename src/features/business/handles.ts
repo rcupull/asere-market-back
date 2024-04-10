@@ -5,6 +5,7 @@ import { businessServices } from "./services";
 import { ServerResponse } from "http";
 import { BusinessModel } from "../../schemas/business";
 import { PostModel } from "../../schemas/post";
+import { get200Response } from "../../utils/server-response";
 
 const get_business: () => RequestHandler = () => {
   return (req, res) => {
@@ -89,7 +90,10 @@ const add_business_post_category: () => RequestHandler = () => {
 
       if (out instanceof ServerResponse) return out;
 
-      res.status(200).json({});
+      get200Response({
+        res,
+        json: {},
+      });
     });
   };
 };
@@ -121,7 +125,10 @@ const put_business_post_category: () => RequestHandler = () => {
         );
       }
 
-      res.status(200).json({});
+      get200Response({
+        res,
+        json: {},
+      });
     });
   };
 };
@@ -162,7 +169,10 @@ const del_business_post_category: () => RequestHandler = () => {
 
       if (out instanceof ServerResponse) return out;
 
-      res.status(200).json({});
+      get200Response({
+        res,
+        json: {},
+      });
     });
   };
 };

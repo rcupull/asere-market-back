@@ -6,8 +6,36 @@ import { ServerResponse } from "http";
 import { postServices } from "../features/post/services";
 import { isEqualIds } from "../utils/general";
 import { passportJwtMiddleware } from "./passport";
+import { get401Response, get404Response } from "../utils/server-response";
 
-export const verifyUser = passportJwtMiddleware;
+export const isLogged = passportJwtMiddleware;
+
+export const isAdmin: RequestHandler = (req, res, next) => {
+  const user = req.user as User;
+
+  if (user.role == "admin") return next();
+
+  get401Response({ res, json: { message: "The user is not an admin" } });
+};
+
+export const isUserIdAccessible: RequestHandler = (req, res, next) => {
+  const user = req.user as User;
+  const { userId } = req.params;
+
+  if (!userId) {
+    return get404Response({
+      res,
+      json: { message: "UserId not found" },
+    });
+  }
+
+  if (user._id.toString() === userId) return next();
+
+  get401Response({
+    res,
+    json: { message: "The user has not access to this data" },
+  });
+};
 
 export type RequestWithUser<
   P = AnyRecord,
@@ -20,7 +48,7 @@ export type RequestWithUser<
 };
 
 /**
- * Should be put it after verifyUser
+ * Should be put it after isLogged
  */
 // export const verifyBussiness: RequestHandler = (req, res, next) => {
 //   withTryCatch(req, res, async () => {

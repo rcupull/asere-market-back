@@ -7,6 +7,7 @@ import {
   header,
 } from "express-validator";
 import { AnyRecord } from "../types/general";
+import { get422Response } from "../utils/server-response";
 
 const handle: RequestHandler = (
   req: Request,
@@ -21,7 +22,12 @@ const handle: RequestHandler = (
       //@ts-expect-error ignore
       error[`${req.method} ${req.originalUrl} ${err.path}`] = err.msg;
     });
-    return res.status(422).json({ error });
+    return get422Response({
+      res,
+      json: {
+        error,
+      },
+    });
   }
   next();
 };

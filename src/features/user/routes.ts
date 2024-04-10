@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { pagination } from "../../middlewares/pagination";
 import { validators } from "../../middlewares/express-validator";
-import { verifyUser } from "../../middlewares/verify";
+import { isLogged, isUserIdAccessible } from "../../middlewares/verify";
 
 import { userHandles } from "./handles";
 import { imageHandles } from "../images/handles";
@@ -16,13 +16,15 @@ router
   .get(
     validators.param("userId").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     userHandles.get_users_userId()
   )
   .put(
     validators.param("userId").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     userHandles.put_users_userId()
   );
 
@@ -33,7 +35,8 @@ router
   .get(
     validators.param("userId").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     pagination,
     userHandles.get_users_userId_business()
   )
@@ -43,7 +46,8 @@ router
     validators.body("category").notEmpty(),
     validators.body("routeName").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     userHandles.post_users_userId_business()
   );
 
@@ -54,7 +58,8 @@ router
   .get(
     validators.param("userId").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     pagination,
     userHandles.get_users_userId_business_all_routeNames()
   );
@@ -67,7 +72,8 @@ router
     validators.param("userId").notEmpty(),
     validators.param("routeName").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     userHandles.get_users_userId_business_routeName()
   )
   .put(
@@ -75,7 +81,8 @@ router
     validators.param("userId").notEmpty(),
     validators.param("routeName").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     userHandles.put_users_userId_business_routeName()
   )
   .delete(
@@ -83,7 +90,8 @@ router
     validators.param("userId").notEmpty(),
     validators.param("routeName").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     userHandles.delete_users_userId_business_routeName()
   );
 
@@ -95,7 +103,8 @@ router
     validators.param("userId").notEmpty(),
     validators.param("routeName").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     businessHandles.get_business_post_categories()
   )
   .post(
@@ -104,7 +113,8 @@ router
     validators.body("label").notEmpty(),
     validators.body("tag").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     businessHandles.add_business_post_category()
   );
 
@@ -115,7 +125,8 @@ router
     validators.param("routeName").notEmpty(),
     validators.param("tag").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     businessHandles.put_business_post_category()
   )
   .delete(
@@ -123,7 +134,8 @@ router
     validators.param("routeName").notEmpty(),
     validators.param("tag").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     businessHandles.del_business_post_category()
   );
 
@@ -134,7 +146,8 @@ router
   .post(
     validators.param("userId").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     imageHandles.get_post_image()
   );
 
@@ -145,7 +158,8 @@ router
   .get(
     validators.param("userId").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     pagination,
     userHandles.get_users_userId_posts()
   )
@@ -154,7 +168,8 @@ router
     validators.body("routeName").notEmpty(),
     validators.body("name").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     userHandles.post_users_userId_posts()
   );
 /////////////////////////////////////////////////////////////////
@@ -165,13 +180,16 @@ router
     validators.param("userId").notEmpty(),
     validators.param("postId").notEmpty(),
     validators.handle,
+    isLogged,
+    isUserIdAccessible,
     userHandles.get_users_userId_posts_postId()
   )
   .put(
     validators.param("userId").notEmpty(),
     validators.param("postId").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     userHandles.put_users_userId_posts_postId()
   )
   .delete(
@@ -179,7 +197,8 @@ router
     validators.param("userId").notEmpty(),
     validators.param("postId").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     userHandles.delete_users_userId_posts_postId()
   );
 
@@ -189,7 +208,8 @@ router
     validators.param("userId").notEmpty(),
     validators.param("postId").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     userHandles.post_users_userId_posts_postId_duplicate()
   );
 /////////////////////////////////////////////////////////////////
@@ -199,7 +219,8 @@ router
   .get(
     validators.param("userId").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     userHandles.get_users_userId_payment_plan()
   );
 
@@ -210,7 +231,8 @@ router
     validators.body("planType").notEmpty(),
     validators.body("validationPurchaseCode").notEmpty(),
     validators.handle,
-    verifyUser,
+    isLogged,
+    isUserIdAccessible,
     userHandles.post_users_userId_payment_plan_purchase()
   );
 
@@ -223,11 +245,15 @@ router
     validators.param("routeName").notEmpty(),
     validators.body("update").notEmpty(),
     validators.handle,
+    isLogged,
+    isUserIdAccessible,
     userHandles.put_users_userId_business_routeName_bulkActions_posts()
   )
   .delete(
     validators.param("userId").notEmpty(),
     validators.param("routeName").notEmpty(),
     validators.handle,
+    isLogged,
+    isUserIdAccessible,
     userHandles.delete_users_userId_business_routeName_bulkActions_posts()
   );

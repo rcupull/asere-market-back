@@ -1,12 +1,18 @@
 import supertest from "supertest";
 import { BusinessModel } from "../../schemas/business";
 import { app } from "../../server";
-import { setAnyString } from "../../utils/test-utils";
+import {
+  dropTestDbConnectionAsync,
+  setAnyString,
+} from "../../utils/test-utils";
 import { objectIds } from "../../utils/test-dummies";
 import { Business } from "../../types/business";
 import { fillBD } from "../../utils/test-BD";
 
 describe("/business", () => {
+  afterEach(async () => {
+    await dropTestDbConnectionAsync();
+  });
   it("GET", async () => {
     await fillBD();
 
@@ -15,7 +21,8 @@ describe("/business", () => {
       .expect(200)
       .then((response) => {
         expect(response.body.data[0]).toMatchInlineSnapshot(
-  setAnyString<Business>("_id", "createdAt", "createdBy"), `
+          setAnyString<Business>("_id", "createdAt", "createdBy"),
+          `
 {
   "__v": 0,
   "_id": Anything,
@@ -42,41 +49,12 @@ describe("/business", () => {
   "postCategories": [],
   "routeName": "business1User1",
 }
-`);
-
-        expect(response.body.data[1]).toMatchInlineSnapshot(
-  setAnyString<Business>("_id", "createdAt", "createdBy"), `
-{
-  "__v": 0,
-  "_id": Anything,
-  "aboutUsPage": {
-    "visible": false,
-  },
-  "bannerImages": [],
-  "createdAt": Anything,
-  "createdBy": Anything,
-  "hidden": false,
-  "layouts": {
-    "banner": {
-      "type": "static",
-    },
-    "footer": {
-      "type": "basic",
-    },
-    "search": {
-      "type": "right",
-    },
-  },
-  "logo": null,
-  "name": "business2User1",
-  "postCategories": [],
-  "routeName": "business2User1",
-}
-`);
+`
+        );
 
         expect(response.body.paginator).toMatchInlineSnapshot(`
 {
-  "dataCount": 3,
+  "dataCount": 4,
   "hasNextPage": false,
   "hasPrevPage": false,
   "limit": 10,
@@ -90,9 +68,24 @@ describe("/business", () => {
 `);
       });
   });
+
+  it("GET should no return hidden business", async () => {
+    await fillBD();
+
+    await supertest(app)
+      .get(`/business`)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.data.length).toEqual(4);
+      });
+  });
 });
 
 describe("/business/:routeName", () => {
+  afterEach(async () => {
+    await dropTestDbConnectionAsync();
+  });
+
   it("GET", async () => {
     const { business1User1 } = await fillBD();
 

@@ -4,6 +4,7 @@ import { combineMiddleware } from "../../utils/general";
 import { withTryCatch } from "../../utils/error";
 import { imagesServices } from "./services";
 import { ServerResponse } from "http";
+import { get200Response } from "../../utils/server-response";
 const get_post_image: () => RequestHandler = () => {
   return combineMiddleware(
     uploadImageMiddleware.single("image"),
@@ -29,7 +30,10 @@ const get_delete_one_image: () => RequestHandler = () => {
 
       if (out instanceof ServerResponse) return out;
 
-      res.status(200).json({});
+      get200Response({
+        res,
+        json: {},
+      });
     });
   };
 };

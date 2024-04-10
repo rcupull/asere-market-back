@@ -1,14 +1,20 @@
 import supertest from "supertest";
 import { app } from "../../server";
-import { generateToken, setAnyString } from "../../utils/test-utils";
-import { UserModel } from "../../schemas/user";
+import {
+  dropTestDbConnectionAsync,
+  generateToken,
+  setAnyString,
+} from "../../utils/test-utils";
 import { Image } from "../../types/general";
 import { User } from "../../types/user";
 import { Business } from "../../types/business";
 import { fillBD } from "../../utils/test-BD";
-import { PaginateResult } from "../../middlewares/pagination";
 
 describe("/user/:userId", () => {
+  afterEach(async () => {
+    await dropTestDbConnectionAsync();
+  });
+
   it("GET", async () => {
     const { user1 } = await fillBD();
 
@@ -27,6 +33,7 @@ describe("/user/:userId", () => {
 {
   "__v": 0,
   "_id": Anything,
+  "canCreateBusiness": false,
   "createdAt": Anything,
   "email": "user1@gmail.com",
   "name": "user1",
@@ -42,11 +49,26 @@ describe("/user/:userId", () => {
   },
   "profileImage": null,
   "role": "user",
-  "validated": false,
+  "validated": true,
 }
 `
         );
       });
+  });
+
+  it("GET should fail if not autenticated", async () => {
+    const { user1 } = await fillBD();
+
+    await supertest(app).get(`/user/${user1._id}`).expect(401);
+  });
+
+  it("GET should fail if the user has no access", async () => {
+    const { user1, user2 } = await fillBD();
+
+    await supertest(app)
+      .get(`/user/${user2._id}`) // wrong id
+      .auth(generateToken(user1._id), { type: "bearer" })
+      .expect(401);
   });
 
   it("PUT", async () => {
@@ -80,6 +102,7 @@ describe("/user/:userId", () => {
 {
   "__v": 0,
   "_id": Anything,
+  "canCreateBusiness": false,
   "createdAt": Anything,
   "email": "user1@gmail.com",
   "name": "user1",
@@ -99,14 +122,33 @@ describe("/user/:userId", () => {
     "width": 300,
   },
   "role": "user",
-  "validated": false,
+  "validated": true,
 }
 `
         );
       });
   });
+
+  it("PUT should fail if not autenticated", async () => {
+    const { user1 } = await fillBD();
+
+    await supertest(app).put(`/user/${user1._id}`).expect(401);
+  });
+
+  it("PUT should fail if the user has no access", async () => {
+    const { user1, user2 } = await fillBD();
+
+    await supertest(app)
+      .put(`/user/${user2._id}`) // wrong id
+      .auth(generateToken(user1._id), { type: "bearer" })
+      .expect(401);
+  });
 });
 describe("/user/:userId/business", () => {
+  afterEach(async () => {
+    await dropTestDbConnectionAsync();
+  });
+
   it("GET", async () => {
     const { user1 } = await fillBD();
 
@@ -147,41 +189,9 @@ describe("/user/:userId/business", () => {
 `
         );
 
-        expect(response.body.data[1]).toMatchInlineSnapshot(
-          setAnyString<Business>("_id", "createdAt", "createdBy"),
-          `
-{
-  "__v": 0,
-  "_id": Anything,
-  "aboutUsPage": {
-    "visible": false,
-  },
-  "bannerImages": [],
-  "createdAt": Anything,
-  "createdBy": Anything,
-  "hidden": false,
-  "layouts": {
-    "banner": {
-      "type": "static",
-    },
-    "footer": {
-      "type": "basic",
-    },
-    "search": {
-      "type": "right",
-    },
-  },
-  "logo": null,
-  "name": "business2User1",
-  "postCategories": [],
-  "routeName": "business2User1",
-}
-`
-        );
-
         expect(response.body.paginator).toMatchInlineSnapshot(`
 {
-  "dataCount": 2,
+  "dataCount": 3,
   "hasNextPage": false,
   "hasPrevPage": false,
   "limit": 10,
@@ -194,6 +204,21 @@ describe("/user/:userId/business", () => {
 }
 `);
       });
+  });
+
+  it("GET should fail if not autenticated", async () => {
+    const { user1 } = await fillBD();
+
+    await supertest(app).get(`/user/${user1.id}/business`).expect(401);
+  });
+
+  it("GET should fail if the user has no access", async () => {
+    const { user1, user2 } = await fillBD();
+
+    await supertest(app)
+      .get(`/user/${user2._id}/business`) // wrong id
+      .auth(generateToken(user1._id), { type: "bearer" })
+      .expect(401);
   });
 
   it("POST should fail if the business already exists", async () => {
@@ -227,5 +252,32 @@ describe("/user/:userId/business", () => {
       .get(`/user/${user1._id}/business/newBusiness`)
       .auth(generateToken(user1._id), { type: "bearer" })
       .expect(200);
+  });
+
+  it("POST should fail if not autenticated", async () => {
+    const { user1 } = await fillBD();
+
+    await supertest(app)
+      .post(`/user/${user1.id}/business`)
+      .send({
+        name: "newBusiness",
+        routeName: "newBusiness",
+        category: "clothing",
+      })
+      .expect(401);
+  });
+
+  it("POST should fail if the user has no access", async () => {
+    const { user1, user2 } = await fillBD();
+
+    await supertest(app)
+      .post(`/user/${user2.id}/business`)
+      .send({
+        name: "newBusiness",
+        routeName: "newBusiness",
+        category: "clothing",
+      })
+      .auth(generateToken(user1._id), { type: "bearer" })
+      .expect(401);
   });
 });

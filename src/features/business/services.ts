@@ -14,6 +14,7 @@ import {
 } from "../../middlewares/pagination";
 import { ServerResponse } from "http";
 import { imagesServices } from "../images/services";
+import { get400Response, get404Response } from "../../utils/server-response";
 
 interface GetAllArgs {
   paginateOptions?: PaginateOptions;
@@ -83,8 +84,9 @@ const addOne: QueryHandle<
 > = async ({ category, userId, routeName, name, res }) => {
   const routeNameExists = await BusinessModel.findOne({ routeName });
   if (routeNameExists) {
-    return res.status(400).json({
-      message: "Route name already exists",
+    return get400Response({
+      res,
+      json: { message: "Route name already exists" },
     });
   }
 
@@ -118,8 +120,9 @@ const findOne: QueryHandle<
   const out = await BusinessModel.findOne(filterQuery);
 
   if (!out) {
-    return res.status(404).json({
-      message: "Business not found",
+    return get404Response({
+      res,
+      json: { message: "Business not found" },
     });
   }
 

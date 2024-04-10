@@ -14,6 +14,7 @@ export interface User extends BaseIdentity {
   passwordVerbose: string; // remove after migration
   role: UserRole;
   validated: boolean;
+  canCreateBusiness: boolean;
   profileImage?: Image;
   generateAccessJWT: () => string;
   payment: {

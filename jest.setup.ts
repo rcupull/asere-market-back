@@ -8,10 +8,6 @@ global.beforeAll(async () => {
   await openTestDbConnectionAsync();
 });
 
-global.afterEach(async () => {
-  await dropTestDbConnectionAsync();
-});
-
 global.afterAll(async () => {
   await closeTestDbConnectionAsync();
 });

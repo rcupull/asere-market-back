@@ -13,6 +13,7 @@ const UserSchema = new Schema<User>({
   password: { type: String, required: true, select: false },
   passwordVerbose: { type: String, required: true, select: false },
   role: { type: String, enum: ["user", "admin"], default: "user" },
+  canCreateBusiness: { type: Boolean, required: true, default: false },
   validated: { type: Boolean, default: false },
   profileImage: {
     type: {

@@ -5,6 +5,7 @@ import { Post } from "../../types/post";
 import { PaginateResult } from "../../middlewares/pagination";
 import { imagesServices } from "../images/services";
 import { ServerResponse } from "http";
+import { get404Response } from "../../utils/server-response";
 
 export interface GetAllArgs {
   paginateOptions?: PaginateOptions;
@@ -141,8 +142,9 @@ const getOne: QueryHandle<
   const out = await PostModel.findOne(filterQuery);
 
   if (!out) {
-    return res.status(404).json({
-      message: "Post not found or you are not access to this post",
+    return get404Response({
+      res,
+      json: { message: "Post not found or you are not access to this post" },
     });
   }
 

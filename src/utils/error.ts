@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { get500Response } from "./server-response";
 
 export const withTryCatch = async (
   req: Request,
@@ -13,6 +14,10 @@ export const withTryCatch = async (
     await callback();
   } catch (error) {
     console.error("Error:", tag, error);
-    res.status(500).json({ error: `Error: ${tag}` });
+
+    get500Response({
+      res,
+      json: { error: `Error: ${tag}` },
+    });
   }
 };

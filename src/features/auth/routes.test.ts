@@ -1,11 +1,29 @@
 import supertest from "supertest";
 import { app } from "../../server";
-import { setAnyString } from "../../utils/test-utils";
-import { UserModel } from "../../schemas/user";
+import {
+  dropTestDbConnectionAsync,
+  setAnyString,
+} from "../../utils/test-utils";
 import { User } from "../../types/user";
 import { fillBD } from "../../utils/test-BD";
 
 describe("/auth/sign-in", () => {
+  afterEach(async () => {
+    await dropTestDbConnectionAsync();
+  });
+
+  it("POST should fail when user is not validated", async () => {
+    await fillBD({ overrideUser1: { validated: false } });
+
+    await supertest(app)
+      .post(`/auth/sign-in`)
+      .send({
+        username: "user1@gmail.com",
+        password: "password_123_user1",
+      })
+      .expect(401);
+  });
+
   it("POST", async () => {
     await fillBD();
 
@@ -30,6 +48,7 @@ describe("/auth/sign-in", () => {
 {
   "__v": 0,
   "_id": Anything,
+  "canCreateBusiness": false,
   "createdAt": Anything,
   "email": "user1@gmail.com",
   "name": "user1",
@@ -45,7 +64,7 @@ describe("/auth/sign-in", () => {
   },
   "profileImage": null,
   "role": "user",
-  "validated": false,
+  "validated": true,
 }
 `
         );

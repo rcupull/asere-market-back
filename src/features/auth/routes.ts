@@ -33,6 +33,7 @@ router
     validators.body("email").notEmpty().isEmail(),
     validators.body("password").notEmpty(),
     validators.body("name").notEmpty(),
+    validators.body("canCreateBusiness").notEmpty(),
     validators.handle,
     authHandles.post_signUp()
   );

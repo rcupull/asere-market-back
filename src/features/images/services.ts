@@ -1,6 +1,7 @@
 import { filesDir } from "../../middlewares/files";
 import { Image, QueryHandle } from "../../types/general";
 import fs from "fs";
+import { get400Response } from "../../utils/server-response";
 
 const deleteOne: QueryHandle<{
   src: string;
@@ -10,8 +11,9 @@ const deleteOne: QueryHandle<{
   if (fs.existsSync(fullPath)) {
     fs.unlink(fullPath, (err) => {
       if (err) {
-        return res.status(400).json({
-          message: "Error deleting the image",
+        return get400Response({
+          res,
+          json: { message: "Error deleting the image" },
         });
       }
     });
@@ -36,8 +38,11 @@ const deleteDir: QueryHandle<{
   if (fs.existsSync(path)) {
     fs.rmdir(path, { recursive: true }, (err) => {
       if (err) {
-        return res.status(400).json({
-          message: "Error deleting the folder",
+        return get400Response({
+          res,
+          json: {
+            message: "Error deleting the folder",
+          },
         });
       }
     });
