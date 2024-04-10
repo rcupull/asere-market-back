@@ -4,34 +4,18 @@ import { app } from "../../server";
 import { setAnyString } from "../../utils/test-utils";
 import { objectIds } from "../../utils/test-dummies";
 import { Business } from "../../types/business";
+import { fillBD } from "../../utils/test-BD";
 
 describe("/business", () => {
   it("GET", async () => {
-    const dummy1 = new BusinessModel({
-      name: "business1",
-      routeName: "business1",
-      createdBy: objectIds.obj1,
-      category: "clothing",
-    });
-
-    await dummy1.save();
-    //
-    const dummy2 = new BusinessModel({
-      name: "business2",
-      routeName: "business2",
-      createdBy: objectIds.obj1,
-      category: "clothing",
-    });
-
-    await dummy2.save();
+    await fillBD();
 
     await supertest(app)
       .get(`/business`)
       .expect(200)
       .then((response) => {
         expect(response.body.data[0]).toMatchInlineSnapshot(
-          setAnyString<Business>("_id", "createdAt"),
-          `
+  setAnyString<Business>("_id", "createdAt", "createdBy"), `
 {
   "__v": 0,
   "_id": Anything,
@@ -39,9 +23,8 @@ describe("/business", () => {
     "visible": false,
   },
   "bannerImages": [],
-  "category": "clothing",
   "createdAt": Anything,
-  "createdBy": "62a23958e5a9e9b88f853a11",
+  "createdBy": Anything,
   "hidden": false,
   "layouts": {
     "banner": {
@@ -55,15 +38,14 @@ describe("/business", () => {
     },
   },
   "logo": null,
-  "name": "business1",
+  "name": "business1User1",
   "postCategories": [],
-  "routeName": "business1",
+  "routeName": "business1User1",
 }
-`
-        );
+`);
+
         expect(response.body.data[1]).toMatchInlineSnapshot(
-          setAnyString<Business>("_id", "createdAt"),
-          `
+  setAnyString<Business>("_id", "createdAt", "createdBy"), `
 {
   "__v": 0,
   "_id": Anything,
@@ -71,9 +53,8 @@ describe("/business", () => {
     "visible": false,
   },
   "bannerImages": [],
-  "category": "clothing",
   "createdAt": Anything,
-  "createdBy": "62a23958e5a9e9b88f853a11",
+  "createdBy": Anything,
   "hidden": false,
   "layouts": {
     "banner": {
@@ -87,15 +68,15 @@ describe("/business", () => {
     },
   },
   "logo": null,
-  "name": "business2",
+  "name": "business2User1",
   "postCategories": [],
-  "routeName": "business2",
+  "routeName": "business2User1",
 }
-`
-        );
+`);
+
         expect(response.body.paginator).toMatchInlineSnapshot(`
 {
-  "dataCount": 2,
+  "dataCount": 3,
   "hasNextPage": false,
   "hasPrevPage": false,
   "limit": 10,
@@ -113,50 +94,42 @@ describe("/business", () => {
 
 describe("/business/:routeName", () => {
   it("GET", async () => {
-    const dummy1 = new BusinessModel({
-      name: "business1",
-      routeName: "business1",
-      createdBy: objectIds.obj1,
-      category: "clothing",
-    });
-
-    await dummy1.save();
+    const { business1User1 } = await fillBD();
 
     await supertest(app)
-      .get(`/business/${dummy1.routeName}`)
+      .get(`/business/${business1User1.routeName}`)
       .expect(200)
       .then((response) => {
         expect(response.body).toMatchInlineSnapshot(
-          setAnyString<Business>("_id", "createdAt"),
+          setAnyString<Business>("_id", "createdAt", "createdBy"),
           `
-  {
-    "__v": 0,
-    "_id": Anything,
-    "aboutUsPage": {
-      "visible": false,
+{
+  "__v": 0,
+  "_id": Anything,
+  "aboutUsPage": {
+    "visible": false,
+  },
+  "bannerImages": [],
+  "createdAt": Anything,
+  "createdBy": Anything,
+  "hidden": false,
+  "layouts": {
+    "banner": {
+      "type": "static",
     },
-    "bannerImages": [],
-    "category": "clothing",
-    "createdAt": Anything,
-    "createdBy": "62a23958e5a9e9b88f853a11",
-    "hidden": false,
-    "layouts": {
-      "banner": {
-        "type": "static",
-      },
-      "footer": {
-        "type": "basic",
-      },
-      "search": {
-        "type": "right",
-      },
+    "footer": {
+      "type": "basic",
     },
-    "logo": null,
-    "name": "business1",
-    "postCategories": [],
-    "routeName": "business1",
-  }
-  `
+    "search": {
+      "type": "right",
+    },
+  },
+  "logo": null,
+  "name": "business1User1",
+  "postCategories": [],
+  "routeName": "business1User1",
+}
+`
         );
       });
   });

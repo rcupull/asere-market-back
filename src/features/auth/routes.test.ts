@@ -3,23 +3,17 @@ import { app } from "../../server";
 import { setAnyString } from "../../utils/test-utils";
 import { UserModel } from "../../schemas/user";
 import { User } from "../../types/user";
+import { fillBD } from "../../utils/test-BD";
 
 describe("/auth/sign-in", () => {
   it("POST", async () => {
-    const user = new UserModel({
-      name: "user1",
-      email: "user1@gmail.com",
-      password: "password_123",
-      passwordVerbose: "password_123",
-    });
-
-    await user.save();
+    await fillBD();
 
     await supertest(app)
       .post(`/auth/sign-in`)
       .send({
         username: "user1@gmail.com",
-        password: "password_123",
+        password: "password_123_user1",
       })
       .expect(200)
       .then((response) => {

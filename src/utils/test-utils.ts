@@ -30,7 +30,7 @@ export const closeTestDbConnectionAsync = async () => {
   return mongose.connection.close();
 };
 
-export const generateToken = (id: string) => {
+export const generateToken = (id: string | mongose.Types.ObjectId) => {
   return jwt.sign(
     {
       id,
