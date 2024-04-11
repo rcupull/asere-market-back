@@ -52,9 +52,6 @@ const put_users_userId_plans_planId: () => RequestHandler = () => {
       const { userId, planId } = params;
       const { status } = body;
 
-      console.log("params", params);
-      console.log("body", body);
-
       await UserModel.updateOne(
         { _id: userId },
         {

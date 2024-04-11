@@ -257,3 +257,16 @@ router
     isUserIdAccessible,
     userHandles.delete_users_userId_business_routeName_bulkActions_posts()
   );
+
+/////////////////////////////////////////////////////////////////
+
+router
+  .route("/user/:userId/shopping/car")
+  .post(
+    validators.param("userId").notEmpty(),
+    validators.body("postId").notEmpty(),
+    validators.handle,
+    isLogged,
+    isUserIdAccessible,
+    userHandles.post_users_userId_shopping_car()
+  );

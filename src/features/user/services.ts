@@ -2,6 +2,8 @@ import { QueryHandle } from "../../types/general";
 import { User } from "../../types/user";
 import { UserModel } from "../../schemas/user";
 import { get401Response, get404Response } from "../../utils/server-response";
+import { FilterQuery, ProjectionType, UpdateQuery } from "mongoose";
+import { UpdateOptions } from "mongodb";
 
 const addOne: QueryHandle<
   {
@@ -39,11 +41,12 @@ const addOne: QueryHandle<
 
 const getOne: QueryHandle<
   {
-    query: Pick<User, "_id">;
+    query: FilterQuery<User>;
+    projection?: ProjectionType<User>;
   },
   User
-> = async ({ query, res }) => {
-  const user = await UserModel.findOne(query);
+> = async ({ query, res, projection }) => {
+  const user = await UserModel.findOne(query, projection);
   if (!user) {
     return get404Response({
       res,
@@ -58,12 +61,13 @@ const getOne: QueryHandle<
 
 const updateOne: QueryHandle<
   {
-    query: Pick<User, "_id">;
-    update: Pick<User, "profileImage">;
+    query: FilterQuery<User>;
+    update: UpdateQuery<User>;
+    options?: UpdateOptions;
   },
   void
-> = async ({ query, res, update }) => {
-  await UserModel.updateOne(query, update);
+> = async ({ query, res, update, options }) => {
+  await UserModel.updateOne(query, update, options);
 };
 
 export const userServices = {

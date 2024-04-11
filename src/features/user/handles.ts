@@ -572,6 +572,72 @@ const put_users_userId_business_routeName_bulkActions_posts: () => RequestHandle
       });
     };
   };
+
+const post_users_userId_shopping_car: () => RequestHandler = () => {
+  return (req, res) => {
+    withTryCatch(req, res, async () => {
+      const { params, body } = req as RequestWithUser;
+      const { userId } = params;
+      const { postId } = body;
+
+      const user = await userServices.getOne({
+        res,
+        query: {
+          _id: userId,
+        },
+      });
+
+      if (user instanceof ServerResponse) return user;
+
+      const existMeta = !!user.shoppingCar?.added.find(
+        ({ postId: _postId }) => _postId === postId
+      );
+
+      if (existMeta) {
+        await userServices.updateOne({
+          res,
+          query: {
+            _id: userId,
+          },
+          update: {
+            $set: {
+              "shoppingCar.added.$[meta].lastUpdatedDate": new Date(),
+            },
+            $inc: {
+              "shoppingCar.added.$[meta].count": 1,
+            },
+          },
+          options: {
+            arrayFilters: [
+              {
+                "meta.postId": postId,
+              },
+            ],
+          },
+        });
+      } else {
+        await userServices.updateOne({
+          res,
+          query: {
+            _id: userId,
+          },
+          update: {
+            $push: {
+              "shoppingCar.added": {
+                postId,
+                count: 1,
+                lastUpdatedDate: new Date(),
+              },
+            },
+          },
+        });
+      }
+
+      res.send({});
+    });
+  };
+};
+
 export const userHandles = {
   get_users_userId,
   put_users_userId,
@@ -596,4 +662,6 @@ export const userHandles = {
   // bulk actions
   delete_users_userId_business_routeName_bulkActions_posts,
   put_users_userId_business_routeName_bulkActions_posts,
+  //
+  post_users_userId_shopping_car,
 };

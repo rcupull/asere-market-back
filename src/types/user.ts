@@ -7,6 +7,14 @@ import {
 
 export type UserRole = "user" | "admin";
 
+export interface UserShoppingCar {
+  added: Array<{
+    postId: string;
+    count: number;
+    lastUpdatedDate: Date;
+  }>;
+}
+
 export interface User extends BaseIdentity {
   name: string;
   email: string;
@@ -28,4 +36,5 @@ export interface User extends BaseIdentity {
       }
     ];
   };
+  shoppingCar?: UserShoppingCar;
 }

@@ -54,6 +54,22 @@ const UserSchema = new Schema<User>({
       ],
     },
   },
+  shoppingCar: {
+    type: {
+      added: {
+        type: [
+          {
+            _id: false,
+            postId: { type: String, required: true },
+            lastUpdatedDate: { type: Date, required: true },
+            count: { type: Number, required: true },
+          },
+        ],
+        default: [],
+      },
+    },
+    default: null,
+  },
 });
 
 UserSchema.methods.generateAccessJWT = function () {
