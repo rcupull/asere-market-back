@@ -109,108 +109,6 @@ const get_users_userId_business: () => RequestHandler = () => {
   };
 };
 
-const post_users_userId_business: () => RequestHandler = () => {
-  return (req: Request<any, any, Business>, res) => {
-    withTryCatch(req, res, async () => {
-      const { body, params } = req;
-
-      const { userId } = params;
-
-      const { name, category, routeName } = body;
-
-      const out = await businessServices.addOne({
-        category,
-        name,
-        routeName,
-        userId,
-        res,
-      });
-
-      if (out instanceof ServerResponse) return;
-
-      res.send(out);
-    });
-  };
-};
-
-const get_users_userId_business_routeName: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { params } = req as unknown as RequestWithUser;
-      const { routeName, userId } = params;
-
-      const out = await businessServices.findOne({
-        res,
-        routeName,
-        createdBy: userId,
-      });
-
-      if (out instanceof ServerResponse) return;
-
-      res.send(out);
-    });
-  };
-};
-
-const get_users_userId_business_all_routeNames: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { params } = req as unknown as RequestWithUser;
-      const { userId } = params;
-
-      const out = await businessServices.getAllWithoutPagination({
-        res,
-        createdBy: userId,
-      });
-
-      if (out instanceof ServerResponse) return;
-
-      res.send(out.map(({ routeName }) => routeName));
-    });
-  };
-};
-
-const put_users_userId_business_routeName: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { params, body } = req;
-      const { routeName } = params;
-
-      const out = await businessServices.updateOne({
-        res,
-        query: {
-          routeName,
-        },
-        update: body,
-      });
-
-      if (out instanceof ServerResponse) return;
-
-      res.send(out);
-    });
-  };
-};
-
-const delete_users_userId_business_routeName: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { params } = req;
-
-      const { routeName, userId } = params;
-
-      const out = await businessServices.deleteOne({
-        res,
-        routeName,
-        userId,
-      });
-
-      if (out instanceof ServerResponse) return;
-
-      res.send();
-    });
-  };
-};
-
 /**
  *  //////////////////////////////////////////POSTS
  */
@@ -642,11 +540,6 @@ export const userHandles = {
   get_users_userId,
   put_users_userId,
   get_users_userId_business,
-  post_users_userId_business,
-  get_users_userId_business_routeName,
-  get_users_userId_business_all_routeNames,
-  put_users_userId_business_routeName,
-  delete_users_userId_business_routeName,
   //
   get_users_userId_posts,
   post_users_userId_posts,

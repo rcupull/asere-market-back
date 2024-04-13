@@ -7,6 +7,7 @@ import { postServices } from "../features/post/services";
 import { isEqualIds } from "../utils/general";
 import { passportJwtMiddleware } from "./passport";
 import { get401Response, get404Response } from "../utils/server-response";
+import { businessServices } from "../features/business/services";
 
 export const isLogged = passportJwtMiddleware;
 
@@ -34,6 +35,65 @@ export const isUserIdAccessible: RequestHandler = (req, res, next) => {
   get401Response({
     res,
     json: { message: "The user has not access to this data" },
+  });
+};
+
+export const isUserBusinessOwner: RequestHandler = async (req, res, next) => {
+  const user = req.user as User;
+
+  if (!user) {
+    return get404Response({
+      res,
+      json: { message: "user not found" },
+    });
+  }
+
+  if (user.canCreateBusiness) {
+    return next();
+  }
+
+  return get401Response({
+    res,
+    json: { message: "The user is not business owner" },
+  });
+};
+
+export const isUserThisBusinessOwner: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
+  const user = req.user as User;
+  const { routeName } = req.params;
+
+  if (!user) {
+    return get404Response({
+      res,
+      json: { message: "user not found" },
+    });
+  }
+
+  if (!routeName) {
+    return get404Response({
+      res,
+      json: { message: "routeName not found" },
+    });
+  }
+
+  const business = await businessServices.findOne({
+    res,
+    routeName,
+  });
+
+  if (business instanceof ServerResponse) return business;
+
+  if (user._id.toString() === business.createdBy.toString()) {
+    return next();
+  }
+
+  get401Response({
+    res,
+    json: { message: "The user has not access to this business" },
   });
 };
 

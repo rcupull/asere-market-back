@@ -9,6 +9,7 @@ import { get200Response } from "../../utils/server-response";
 import { PostCategory } from "../../types/business";
 import { postHandles } from "../post/handles";
 import { postServices } from "../post/services";
+import { User } from "../../types/user";
 
 const get_business: () => RequestHandler = () => {
   return (req, res) => {
@@ -268,6 +269,75 @@ const del_business_post_category: () => RequestHandler = () => {
   };
 };
 
+const post_business: () => RequestHandler = () => {
+  return (req, res) => {
+    withTryCatch(req, res, async () => {
+      const user = req.user as User;
+
+      const { body } = req;
+
+      const { name, category, routeName } = body;
+
+      const out = await businessServices.addOne({
+        category,
+        name,
+        routeName,
+        userId: user._id,
+        res,
+      });
+
+      if (out instanceof ServerResponse) return;
+
+      res.send(out);
+    });
+  };
+};
+
+const put_business_routeName: () => RequestHandler = () => {
+  return (req, res) => {
+    withTryCatch(req, res, async () => {
+      const user = req.user as User;
+
+      const { params, body } = req;
+      const { routeName } = params;
+
+      const out = await businessServices.updateOne({
+        res,
+        query: {
+          routeName,
+          createdBy: user._id,
+        },
+        update: body,
+      });
+
+      if (out instanceof ServerResponse) return;
+
+      res.send(out);
+    });
+  };
+};
+
+const delete_business_routeName: () => RequestHandler = () => {
+  return (req, res) => {
+    withTryCatch(req, res, async () => {
+      const user = req.user as User;
+      const { params } = req;
+
+      const { routeName } = params;
+
+      const out = await businessServices.deleteOne({
+        res,
+        routeName,
+        userId: user._id,
+      });
+
+      if (out instanceof ServerResponse) return;
+
+      res.send();
+    });
+  };
+};
+
 export const businessHandles = {
   get_business,
   get_business_routeName,
@@ -277,4 +347,8 @@ export const businessHandles = {
   update_business_post_categories,
   put_business_post_category,
   del_business_post_category,
+  //
+  post_business,
+  put_business_routeName,
+  delete_business_routeName,
 };

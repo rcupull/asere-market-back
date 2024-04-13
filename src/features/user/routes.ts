@@ -39,60 +39,6 @@ router
     isUserIdAccessible,
     pagination,
     userHandles.get_users_userId_business()
-  )
-  .post(
-    validators.param("userId").notEmpty(),
-    validators.body("name").notEmpty(),
-    validators.body("category").notEmpty(),
-    validators.body("routeName").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    userHandles.post_users_userId_business()
-  );
-
-/////////////////////////////////////////////////////////////////
-
-router
-  .route("/user/:userId/business/allRouteNames")
-  .get(
-    validators.param("userId").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    pagination,
-    userHandles.get_users_userId_business_all_routeNames()
-  );
-/////////////////////////////////////////////////////////////////
-
-router
-  .route("/user/:userId/business/:routeName")
-  .get(
-    //TODO add a middlware to check acces to this post
-    validators.param("userId").notEmpty(),
-    validators.param("routeName").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    userHandles.get_users_userId_business_routeName()
-  )
-  .put(
-    //TODO add a middlware to check acces to this post
-    validators.param("userId").notEmpty(),
-    validators.param("routeName").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    userHandles.put_users_userId_business_routeName()
-  )
-  .delete(
-    //TODO add a middlware to check acces to this business
-    validators.param("userId").notEmpty(),
-    validators.param("routeName").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    userHandles.delete_users_userId_business_routeName()
   );
 
 /////////////////////////////////////////////////////////////////
