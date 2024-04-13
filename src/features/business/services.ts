@@ -15,6 +15,27 @@ import {
 import { ServerResponse } from "http";
 import { imagesServices } from "../images/services";
 import { get400Response, get404Response } from "../../utils/server-response";
+import { UpdateOptions } from "mongodb";
+
+type UpdateQueryBusiness =
+  | UpdateQuery<
+      Partial<
+        Pick<
+          Business,
+          | "hidden"
+          | "socialLinks"
+          | "bannerImages"
+          | "name"
+          | "routeName"
+          | "logo"
+          | "layouts"
+          | "postCategories"
+          | "aboutUsPage"
+          | "aboutUsPage"
+        >
+      >
+    >
+  | UpdateWithAggregationPipeline;
 
 interface GetAllArgs {
   paginateOptions?: PaginateOptions;
@@ -157,30 +178,18 @@ const deleteOne: QueryHandle<{
 };
 
 const updateOne: QueryHandle<{
-  query: {
-    routeName: string;
-  };
-  update:
-    | UpdateQuery<
-        Partial<
-          Pick<
-            Business,
-            | "hidden"
-            | "socialLinks"
-            | "bannerImages"
-            | "name"
-            | "routeName"
-            | "logo"
-            | "layouts"
-            | "postCategories"
-            | "aboutUsPage"
-            | "aboutUsPage"
-          >
-        >
-      >
-    | UpdateWithAggregationPipeline;
+  query: FilterQuery<Business>;
+  update: UpdateQueryBusiness;
+  options?: UpdateOptions;
+}> = async ({ query, update, options }) => {
+  await BusinessModel.updateOne(query, update, options);
+};
+
+const updateMany: QueryHandle<{
+  query: FilterQuery<Business>;
+  update: UpdateQueryBusiness;
 }> = async ({ query, update }) => {
-  await BusinessModel.updateOne(query, update);
+  await BusinessModel.updateMany(query, update);
 };
 
 export const businessServices = {
@@ -190,4 +199,5 @@ export const businessServices = {
   findOne,
   deleteOne,
   updateOne,
+  updateMany,
 };

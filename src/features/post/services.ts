@@ -1,4 +1,4 @@
-import { FilterQuery, PaginateOptions } from "mongoose";
+import { FilterQuery, PaginateOptions, UpdateQuery } from "mongoose";
 import { QueryHandle } from "../../types/general";
 import { PostModel } from "../../schemas/post";
 import { Post } from "../../types/post";
@@ -276,45 +276,9 @@ const updateOne: QueryHandle<{
 
 const updateMany: QueryHandle<{
   query: FilterQuery<Post>;
-  update: PostUpdate;
+  update: UpdateQuery<Post>;
 }> = async ({ query, update }) => {
-  const {
-    amountAvailable,
-    clothingSizes,
-    colors,
-    details,
-    highlights,
-    images,
-    name,
-    price,
-    reviews,
-    currency,
-    description,
-    hidden,
-    hiddenBusiness,
-    postCategoriesTags,
-    discount,
-    postPageLayout,
-  } = update;
-
-  await PostModel.updateMany(query, {
-    amountAvailable,
-    clothingSizes,
-    colors,
-    details,
-    highlights,
-    images,
-    name,
-    price,
-    reviews,
-    currency,
-    description,
-    hidden,
-    hiddenBusiness,
-    postCategoriesTags,
-    discount,
-    postPageLayout,
-  });
+  await PostModel.updateMany(query, update);
 };
 
 export const postServices = {

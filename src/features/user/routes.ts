@@ -116,6 +116,15 @@ router
     isLogged,
     isUserIdAccessible,
     businessHandles.add_business_post_category()
+  )
+  .put(
+    validators.param("userId").notEmpty(),
+    validators.param("routeName").notEmpty(),
+    validators.body("postCategories").notEmpty(),
+    validators.handle,
+    isLogged,
+    isUserIdAccessible,
+    businessHandles.update_business_post_categories()
   );
 
 router
