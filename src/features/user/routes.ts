@@ -44,59 +44,6 @@ router
 /////////////////////////////////////////////////////////////////
 
 router
-  .route("/user/:userId/business/:routeName/postCategories")
-  .get(
-    validators.param("userId").notEmpty(),
-    validators.param("routeName").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    businessHandles.get_business_post_categories()
-  )
-  .post(
-    validators.param("userId").notEmpty(),
-    validators.param("routeName").notEmpty(),
-    validators.body("label").notEmpty(),
-    validators.body("tag").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    businessHandles.add_business_post_category()
-  )
-  .put(
-    validators.param("userId").notEmpty(),
-    validators.param("routeName").notEmpty(),
-    validators.body("postCategories").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    businessHandles.update_business_post_categories()
-  );
-
-router
-  .route("/user/:userId/business/:routeName/postCategories/:tag")
-  .put(
-    validators.param("userId").notEmpty(),
-    validators.param("routeName").notEmpty(),
-    validators.param("tag").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    businessHandles.put_business_post_category()
-  )
-  .delete(
-    validators.param("userId").notEmpty(),
-    validators.param("routeName").notEmpty(),
-    validators.param("tag").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    businessHandles.del_business_post_category()
-  );
-
-/////////////////////////////////////////////////////////////////
-
-router
   .route("/user/:userId/image")
   .post(
     validators.param("userId").notEmpty(),

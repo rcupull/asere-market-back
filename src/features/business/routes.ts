@@ -42,3 +42,16 @@ router
     isUserThisBusinessOwner,
     businessHandles.delete_business_routeName()
   );
+
+////////////////////////////////////////////////////////
+router
+  .route("/business/:routeName/postCategories")
+  .put(
+    validators.param("routeName").notEmpty(),
+    validators.body("postCategories").notEmpty(),
+    validators.handle,
+    isLogged,
+    isUserBusinessOwner,
+    isUserThisBusinessOwner,
+    businessHandles.update_business_post_categories()
+  );

@@ -7,7 +7,6 @@ import { BusinessModel } from "../../schemas/business";
 import { PostModel } from "../../schemas/post";
 import { get200Response } from "../../utils/server-response";
 import { PostCategory } from "../../types/business";
-import { postHandles } from "../post/handles";
 import { postServices } from "../post/services";
 import { User } from "../../types/user";
 
@@ -48,56 +47,6 @@ const get_business_routeName: () => RequestHandler = () => {
       if (out instanceof ServerResponse) return;
 
       res.send(out);
-    });
-  };
-};
-
-const get_business_post_categories: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { params } = req;
-      const { routeName } = params;
-
-      const out = await businessServices.findOne({
-        res,
-        routeName,
-      });
-
-      if (out instanceof ServerResponse) return;
-
-      res.send(out.postCategories);
-    });
-  };
-};
-
-const add_business_post_category: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { params, body } = req;
-      const { routeName } = params;
-      const { label, tag } = body;
-
-      const out = await businessServices.updateOne({
-        res,
-        query: {
-          routeName,
-        },
-        update: {
-          $push: {
-            postCategories: {
-              label,
-              tag,
-            },
-          },
-        },
-      });
-
-      if (out instanceof ServerResponse) return out;
-
-      get200Response({
-        res,
-        json: {},
-      });
     });
   };
 };
@@ -190,85 +139,6 @@ const update_business_post_categories: () => RequestHandler = () => {
   };
 };
 
-const put_business_post_category: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { params, body } = req;
-      const { routeName, tag } = params;
-      const { hidden } = body;
-
-      if (hidden !== undefined) {
-        await BusinessModel.updateOne(
-          {
-            routeName,
-          },
-          {
-            $set: {
-              "postCategories.$[postToUpdate].hidden": hidden,
-            },
-          },
-          {
-            arrayFilters: [
-              {
-                "postToUpdate.tag": tag,
-              },
-            ],
-          }
-        );
-      }
-
-      get200Response({
-        res,
-        json: {},
-      });
-    });
-  };
-};
-
-const del_business_post_category: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { params } = req;
-      const { routeName, tag } = params;
-
-      /**
-       * Remove tag from posts
-       */
-      await PostModel.updateMany(
-        {
-          postCategoriesTags: { $in: [tag] },
-        },
-        {
-          $pull: {
-            postCategoriesTags: tag,
-          },
-        }
-      );
-
-      const out = await businessServices.updateOne({
-        res,
-        query: {
-          routeName,
-        },
-        update: {
-          $pull: {
-            postCategories: {
-              tag,
-            },
-          },
-        },
-      });
-
-      if (out instanceof ServerResponse) return out;
-
-      get200Response({
-        res,
-        json: {},
-      });
-    });
-  };
-};
-
 const post_business: () => RequestHandler = () => {
   return (req, res) => {
     withTryCatch(req, res, async () => {
@@ -342,11 +212,7 @@ export const businessHandles = {
   get_business,
   get_business_routeName,
   //
-  get_business_post_categories,
-  add_business_post_category,
   update_business_post_categories,
-  put_business_post_category,
-  del_business_post_category,
   //
   post_business,
   put_business_routeName,
