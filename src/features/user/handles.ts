@@ -589,7 +589,7 @@ const post_users_userId_shopping_car: () => RequestHandler = () => {
 
       if (user instanceof ServerResponse) return user;
 
-      const existMeta = !!user.shoppingCar?.added.find(
+      const existMeta = !!user.shoppingCart?.added.find(
         ({ postId: _postId }) => _postId === postId
       );
 
@@ -601,10 +601,10 @@ const post_users_userId_shopping_car: () => RequestHandler = () => {
           },
           update: {
             $set: {
-              "shoppingCar.added.$[meta].lastUpdatedDate": new Date(),
+              "shoppingCart.added.$[meta].lastUpdatedDate": new Date(),
             },
             $inc: {
-              "shoppingCar.added.$[meta].count": 1,
+              "shoppingCart.added.$[meta].count": 1,
             },
           },
           options: {

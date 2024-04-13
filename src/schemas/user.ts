@@ -54,7 +54,7 @@ const UserSchema = new Schema<User>({
       ],
     },
   },
-  shoppingCar: {
+  shoppingCart: {
     type: {
       added: {
         type: [

@@ -7,7 +7,7 @@ import {
 
 export type UserRole = "user" | "admin";
 
-export interface UserShoppingCar {
+export interface UserShoppingCart {
   added: Array<{
     postId: string;
     count: number;
@@ -36,5 +36,5 @@ export interface User extends BaseIdentity {
       }
     ];
   };
-  shoppingCar?: UserShoppingCar;
+  shoppingCart?: UserShoppingCart;
 }
