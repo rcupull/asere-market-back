@@ -64,7 +64,7 @@ export const isUserThisBusinessOwner: RequestHandler = async (
   next
 ) => {
   const user = req.user as User;
-  const { routeName } = req.params;
+  const routeName = req.params.routeName || req.body.routeName;
 
   if (!user) {
     return get404Response({

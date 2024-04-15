@@ -3,27 +3,25 @@ import { withTryCatch } from "../../utils/error";
 import { RequestWithPagination } from "../../middlewares/pagination";
 import { businessServices } from "./services";
 import { ServerResponse } from "http";
-import { BusinessModel } from "../../schemas/business";
-import { PostModel } from "../../schemas/post";
 import { get200Response } from "../../utils/server-response";
 import { PostCategory } from "../../types/business";
 import { postServices } from "../post/services";
 import { User } from "../../types/user";
 
 const get_business: () => RequestHandler = () => {
-  return (req, res) => {
+  return (req: RequestWithPagination, res) => {
     withTryCatch(req, res, async () => {
-      const { paginateOptions, query } =
-        req as unknown as RequestWithPagination;
+      const { paginateOptions, query } = req;
 
-      const { routeNames, search } = query;
+      const { routeNames, search, userId, includeHidden } = query;
 
       const out = await businessServices.getAll({
         res,
         paginateOptions,
         routeNames,
         search,
-        hidden: false,
+        createdBy: userId,
+        hidden: includeHidden ? undefined : false,
       });
 
       if (out instanceof ServerResponse) return;

@@ -31,19 +31,6 @@ router
 /////////////////////////////////////////////////////////////////
 
 router
-  .route("/user/:userId/business")
-  .get(
-    validators.param("userId").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    pagination,
-    userHandles.get_users_userId_business()
-  );
-
-/////////////////////////////////////////////////////////////////
-
-router
   .route("/user/:userId/image")
   .post(
     validators.param("userId").notEmpty(),
@@ -55,25 +42,6 @@ router
 
 /////////////////////////////////////////////////////////////////
 
-router
-  .route("/user/:userId/posts")
-  .get(
-    validators.param("userId").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    pagination,
-    userHandles.get_users_userId_posts()
-  )
-  .post(
-    validators.param("userId").notEmpty(),
-    validators.body("routeName").notEmpty(),
-    validators.body("name").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    userHandles.post_users_userId_posts()
-  );
 /////////////////////////////////////////////////////////////////
 
 router

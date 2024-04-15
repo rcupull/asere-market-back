@@ -85,108 +85,9 @@ const put_users_userId: () => RequestHandler = () => {
   };
 };
 
-const get_users_userId_business: () => RequestHandler = () => {
-  return (req: RequestWithPagination, res) => {
-    withTryCatch(req, res, async () => {
-      const { paginateOptions, query, params } = req;
-
-      const { userId } = params;
-
-      const { routeNames, search } = query;
-
-      const out = await businessServices.getAll({
-        res,
-        paginateOptions,
-        createdBy: userId,
-        routeNames,
-        search,
-      });
-
-      if (out instanceof ServerResponse) return;
-
-      res.send(out);
-    });
-  };
-};
-
 /**
  *  //////////////////////////////////////////POSTS
  */
-
-const get_users_userId_posts: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { query, paginateOptions, params } =
-        req as unknown as RequestWithPagination;
-
-      const { userId } = params;
-
-      const { search, routeNames, postCategoriesTags, postCategoriesMethod } =
-        query;
-
-      const out = await postServices.getAll({
-        res,
-        paginateOptions,
-        routeNames,
-        search,
-        createdBy: userId,
-        postCategoriesTags,
-        postCategoriesMethod,
-      });
-
-      if (out instanceof ServerResponse) return;
-
-      res.send(out);
-    });
-  };
-};
-
-const post_users_userId_posts: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { body, params } = req;
-
-      const { userId } = params;
-
-      const out = await postServices.addOne({
-        ...body,
-        createdBy: userId,
-        res,
-      });
-
-      if (out instanceof ServerResponse) return;
-
-      res.send(out);
-    });
-  };
-};
-
-const post_users_userId_posts_postId_duplicate: () => RequestHandler = () => {
-  return (req, res, next) => {
-    withTryCatch(req, res, async () => {
-      const { params } = req;
-
-      const { postId } = params;
-
-      const post = await postServices.getOne({
-        postId,
-        res,
-      });
-
-      if (post instanceof ServerResponse) return post;
-
-      //these are omitted fields
-      const { _id, createdAt, createdBy, reviews, images, ...propsToUse } =
-        post;
-
-      req.body = propsToUse;
-
-      // add new post
-      //TODO it show be created next to the current post
-      return post_users_userId_posts()(req, res, next);
-    });
-  };
-};
 
 const get_users_userId_posts_postId: () => RequestHandler = () => {
   return (req, res) => {
@@ -539,16 +440,10 @@ const post_users_userId_shopping_car: () => RequestHandler = () => {
 export const userHandles = {
   get_users_userId,
   put_users_userId,
-  get_users_userId_business,
-  //
-  get_users_userId_posts,
-  post_users_userId_posts,
   //
   get_users_userId_posts_postId,
   put_users_userId_posts_postId,
   delete_users_userId_posts_postId,
-  //
-  post_users_userId_posts_postId_duplicate,
   //
   get_users_userId_payment_plan,
   post_users_userId_payment_plan_purchase,
