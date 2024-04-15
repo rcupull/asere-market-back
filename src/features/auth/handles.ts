@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { RequestHandler } from "../../types/general";
 import { withTryCatch } from "../../utils/error";
 import { ServerResponse } from "http";
 import { UserModel } from "../../schemas/user";

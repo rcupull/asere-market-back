@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { RequestHandler } from "../types/general";
 
 /**
  * Comma separate query to array

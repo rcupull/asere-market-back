@@ -1,6 +1,5 @@
-import { RequestHandler } from "express";
 import { Schema } from "mongoose";
-import { AnyRecord, EmptyObjectOf } from "../types/general";
+import { AnyRecord, EmptyObjectOf, RequestHandler } from "../types/general";
 import dlv from "dlv";
 import { dset } from "dset";
 import { Path } from "../types/paths";

@@ -1,12 +1,11 @@
-import { RequestHandler } from "express";
+import { RequestHandler } from "../../types/general";
 import { withTryCatch } from "../../utils/error";
-import { RequestWithPagination } from "../../middlewares/pagination";
 import { UserModel } from "../../schemas/user";
 import { imagesServices } from "../images/services";
 import { ServerResponse } from "http";
 
 const get_users: () => RequestHandler = () => {
-  return (req: RequestWithPagination, res) => {
+  return (req, res) => {
     withTryCatch(req, res, async () => {
       const { paginateOptions } = req;
 

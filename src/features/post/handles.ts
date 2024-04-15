@@ -1,19 +1,17 @@
-import { RequestHandler } from "express";
+import { RequestHandler } from "../../types/general";
 import { withTryCatch } from "../../utils/error";
-import { RequestWithPagination } from "../../middlewares/pagination";
 import { postServices } from "./services";
 import { ServerResponse } from "http";
 import { User } from "../../types/user";
 import { imagesServices } from "../images/services";
 import { Post } from "../../types/post";
-import { RequestWithMeta } from "../../types/general";
 import {
   get400Response,
   getPostNotFoundResponse,
 } from "../../utils/server-response";
 
 const get_posts: () => RequestHandler = () => {
-  return (req: RequestWithPagination, res) => {
+  return (req, res) => {
     withTryCatch(req, res, async () => {
       const { query, paginateOptions } = req;
 
@@ -114,7 +112,7 @@ const post_posts_postId_duplicate: () => RequestHandler = () => {
 };
 
 const put_posts_postId: () => RequestHandler = () => {
-  return (req: RequestWithMeta, res) => {
+  return (req, res) => {
     withTryCatch(req, res, async () => {
       const currentPost = req.post;
 

@@ -1,20 +1,17 @@
-import { RequestHandler } from "express";
+import { RequestHandler } from "../../types/general";
 import { withTryCatch } from "../../utils/error";
-import { RequestWithPagination } from "../../middlewares/pagination";
 import { ServerResponse } from "http";
 import { RequestWithUser } from "../../middlewares/verify";
 import { GetAllArgs, postServices } from "../post/services";
 import { paymentPlans } from "../../constants/plans";
 import { imagesServices } from "../images/services";
-import { Post } from "../../types/post";
 import { userServices } from "./services";
 import { User } from "../../types/user";
 import { UserModel } from "../../schemas/user";
-import { PostModel } from "../../schemas/post";
 import { isEmpty } from "../../utils/general";
 
 const get_users_userId: () => RequestHandler = () => {
-  return (req: RequestWithPagination, res) => {
+  return (req, res) => {
     withTryCatch(req, res, async () => {
       const { params } = req;
 
@@ -36,7 +33,7 @@ const get_users_userId: () => RequestHandler = () => {
 };
 
 const put_users_userId: () => RequestHandler = () => {
-  return (req: RequestWithPagination, res) => {
+  return (req, res) => {
     withTryCatch(req, res, async () => {
       const { params, body } = req;
 

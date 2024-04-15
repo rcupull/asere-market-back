@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { RequestHandler } from "../../types/general";
 import { filesDir, uploadImageMiddleware } from "../../middlewares/files";
 import { combineMiddleware } from "../../utils/general";
 import { withTryCatch } from "../../utils/error";

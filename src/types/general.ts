@@ -1,14 +1,21 @@
-import { Request, Response } from "express";
+import {
+  Request,
+  Response,
+  RequestHandler as ExpressRequestHandler,
+} from "express";
 import { ServerResponse } from "http";
 import {
   ApplySchemaOptions,
   DefaultSchemaOptions,
   ObtainDocumentType,
+  PaginateOptions,
   ResolveSchemaOptions,
   Schema,
 } from "mongoose";
+
 import { Post } from "./post";
 import { Business } from "./business";
+import { User as UserApp } from "./user";
 
 export type AnyRecord = Record<string, any>;
 
@@ -17,13 +24,27 @@ export interface BaseIdentity {
   createdAt: string;
 }
 
-export type RequestWithMeta = Request & {
-  post?: Post;
-  business?: Business;
-};
+declare global {
+  namespace Express {
+    interface User extends UserApp {}
+    interface Request {
+      post?: Post;
+      business?: Business;
+      paginateOptions?: PaginateOptions;
+    }
+  }
+}
+
+export interface RequestHandler<
+  P = AnyRecord,
+  ResBody = any,
+  ReqBody = any,
+  ReqQuery = AnyRecord,
+  Locals extends Record<string, any> = Record<string, any>
+> extends ExpressRequestHandler<P, ResBody, ReqBody, ReqQuery, Locals> {}
 
 export type QueryHandle<Args extends AnyRecord = AnyRecord, R = void> = (
-  args: Args & { res: Response; req: RequestWithMeta }
+  args: Args & { res: Response; req: Request }
 ) => Promise<R | ServerResponse>;
 
 export type PaymentPlanType = "free" | "beginner" | "professional" | "company";

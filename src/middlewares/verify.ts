@@ -1,7 +1,7 @@
-import { Request, RequestHandler, Response } from "express";
+import { Request, RequestHandler } from "express";
 import { withTryCatch } from "../utils/error";
 import { User } from "../types/user";
-import { AnyRecord, RequestWithMeta } from "../types/general";
+import { AnyRecord } from "../types/general";
 import { ServerResponse } from "http";
 import { postServices } from "../features/post/services";
 import { isEqualIds } from "../utils/general";
@@ -12,9 +12,9 @@ import { businessServices } from "../features/business/services";
 export const isLogged = passportJwtMiddleware;
 
 export const isAdmin: RequestHandler = (req, res, next) => {
-  const user = req.user as User;
+  const user = req.user;
 
-  if (user.role == "admin") return next();
+  if (user?.role == "admin") return next();
 
   get401Response({ res, json: { message: "The user is not an admin" } });
 };
@@ -59,7 +59,7 @@ export const isUserBusinessOwner: RequestHandler = async (req, res, next) => {
 };
 
 export const isUserThisBusinessOwner: RequestHandler = async (
-  req: RequestWithMeta,
+  req,
   res,
   next
 ) => {
@@ -126,8 +126,7 @@ export const isUserThisPostOwner: RequestHandler = async (req, res, next) => {
   if (post instanceof ServerResponse) return post;
 
   if (user._id.toString() === post.createdBy.toString()) {
-    //@ts-expect-error ignore
-    req["post"] = post;
+    req.post = post;
     return next();
   }
 

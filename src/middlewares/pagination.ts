@@ -41,8 +41,7 @@ export const pagination: RequestHandler = (req, res, next) => {
 
   paginateOptions.customLabels = paginationCustomLabels;
 
-  //@ts-expect-error
-  req["paginateOptions"] = paginateOptions;
+  req.paginateOptions = paginateOptions;
 
   Object.keys(paginateOptions).forEach((key) => {
     if (key in req.query) {
@@ -51,14 +50,4 @@ export const pagination: RequestHandler = (req, res, next) => {
   });
 
   next();
-};
-
-export type RequestWithPagination<
-  P = AnyRecord,
-  ResBody = any,
-  ReqBody = any,
-  ReqQuery = AnyRecord,
-  Locals extends Record<string, any> = Record<string, any>
-> = Request<P, ResBody, ReqBody, ReqQuery, Locals> & {
-  paginateOptions?: PaginateOptions;
 };

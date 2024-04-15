@@ -1,6 +1,5 @@
-import { RequestHandler } from "express";
+import { RequestHandler } from "../../types/general";
 import { withTryCatch } from "../../utils/error";
-import { RequestWithPagination } from "../../middlewares/pagination";
 import { GOOGLE_IMG_SCRAP } from "google-img-scrap";
 
 /**
@@ -10,7 +9,7 @@ import { GOOGLE_IMG_SCRAP } from "google-img-scrap";
  */
 
 const search_image: () => RequestHandler = () => {
-  return (req: RequestWithPagination, res) => {
+  return (req, res) => {
     withTryCatch(req, res, async () => {
       const { query } = req;
       const { search } = query;

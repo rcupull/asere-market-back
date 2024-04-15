@@ -1,15 +1,14 @@
-import { RequestHandler } from "express";
 import { withTryCatch } from "../../utils/error";
-import { RequestWithPagination } from "../../middlewares/pagination";
 import { businessServices } from "./services";
 import { ServerResponse } from "http";
 import { get200Response } from "../../utils/server-response";
 import { PostCategory } from "../../types/business";
 import { postServices } from "../post/services";
 import { User } from "../../types/user";
+import { RequestHandler } from "../../types/general";
 
 const get_business: () => RequestHandler = () => {
-  return (req: RequestWithPagination, res) => {
+  return (req, res) => {
     withTryCatch(req, res, async () => {
       const { paginateOptions, query } = req;
 
