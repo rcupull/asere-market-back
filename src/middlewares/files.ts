@@ -5,8 +5,7 @@ export const filesDir = "app-images";
 
 const imageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const { userId } = req.params;
-    const { routeName, postId } = req.query;
+    const { routeName, postId, userId } = req.query;
 
     if (postId && !routeName) {
       return cb(new Error("routeName is required to upload a postimage"), "");

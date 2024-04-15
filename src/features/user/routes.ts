@@ -1,11 +1,8 @@
 import { Router } from "express";
-import { pagination } from "../../middlewares/pagination";
 import { validators } from "../../middlewares/express-validator";
 import { isLogged, isUserIdAccessible } from "../../middlewares/verify";
 
 import { userHandles } from "./handles";
-import { imageHandles } from "../images/handles";
-import { businessHandles } from "../business/handles";
 
 export const router = Router();
 
@@ -27,22 +24,6 @@ router
     isUserIdAccessible,
     userHandles.put_users_userId()
   );
-
-/////////////////////////////////////////////////////////////////
-
-router
-  .route("/user/:userId/image")
-  .post(
-    validators.param("userId").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    imageHandles.get_post_image()
-  );
-
-/////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////
 

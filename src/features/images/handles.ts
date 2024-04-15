@@ -5,7 +5,8 @@ import { withTryCatch } from "../../utils/error";
 import { imagesServices } from "./services";
 import { ServerResponse } from "http";
 import { get200Response } from "../../utils/server-response";
-const get_post_image: () => RequestHandler = () => {
+
+const save_image: () => RequestHandler = () => {
   return combineMiddleware(
     uploadImageMiddleware.single("image"),
     (req, res) => {
@@ -21,7 +22,7 @@ const get_post_image: () => RequestHandler = () => {
   );
 };
 
-const get_delete_one_image: () => RequestHandler = () => {
+const delete_one_image: () => RequestHandler = () => {
   return (req, res) => {
     withTryCatch(req, res, async () => {
       const { imageSrc } = req.body;
@@ -39,6 +40,6 @@ const get_delete_one_image: () => RequestHandler = () => {
 };
 
 export const imageHandles = {
-  get_post_image,
-  get_delete_one_image,
+  save_image,
+  delete_one_image,
 };
