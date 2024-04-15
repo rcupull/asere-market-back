@@ -5,7 +5,10 @@ import { Post } from "../../types/post";
 import { PaginateResult } from "../../middlewares/pagination";
 import { imagesServices } from "../images/services";
 import { ServerResponse } from "http";
-import { get404Response } from "../../utils/server-response";
+import {
+  get404Response,
+  getPostNotFoundResponse,
+} from "../../utils/server-response";
 
 export interface GetAllArgs {
   paginateOptions?: PaginateOptions;
@@ -155,7 +158,7 @@ const deleteMany: QueryHandle<{
   routeName: string;
   postIds?: Array<string>;
   userId: string;
-}> = async ({ res, routeName, userId, postIds: postIdsT }) => {
+}> = async ({ res, req, routeName, userId, postIds: postIdsT }) => {
   let postIds: Array<string> = postIdsT || [];
 
   if (!postIds.length) {
@@ -164,16 +167,15 @@ const deleteMany: QueryHandle<{
       createdBy: userId,
     });
 
-    postIds = allPost.map((post) => post._id);
+    postIds = allPost.map((post) => post._id.toString());
   }
 
   if (postIds?.length) {
     const promises = postIds.map((postId) => {
       return deleteOne({
         res,
-        userId,
+        req,
         postId,
-        routeName,
       });
     });
 
@@ -182,18 +184,25 @@ const deleteMany: QueryHandle<{
 };
 
 const deleteOne: QueryHandle<{
-  routeName: string;
   postId: string;
-  userId: string;
-}> = async ({ routeName, postId, res, userId }) => {
+}> = async ({ postId, res, req }) => {
+  const currentPost = req.post;
+
+  if (!currentPost) {
+    return getPostNotFoundResponse({
+      res,
+    });
+  }
+
   /**
    * Remove all images of post
    */
   await imagesServices.deleteDir({
     res,
-    userId,
+    req,
+    userId: currentPost.createdBy.toString(),
     postId,
-    routeName,
+    routeName: currentPost.routeName,
   });
 
   /**
@@ -201,7 +210,6 @@ const deleteOne: QueryHandle<{
    */
   await PostModel.deleteOne({
     _id: postId,
-    createdBy: userId,
   });
 };
 

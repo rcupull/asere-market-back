@@ -153,12 +153,13 @@ const findOne: QueryHandle<
 const deleteOne: QueryHandle<{
   routeName: string;
   userId: string;
-}> = async ({ routeName, res, userId }) => {
+}> = async ({ routeName, res, req, userId }) => {
   /**
    * Remove all business images
    */
   await imagesServices.deleteDir({
     res,
+    req,
     userId,
     routeName,
   });
@@ -171,6 +172,7 @@ const deleteOne: QueryHandle<{
   const out = await postServices.deleteMany({
     routeName,
     res,
+    req,
     userId,
   });
 

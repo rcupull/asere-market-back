@@ -44,44 +44,6 @@ router
 
 /////////////////////////////////////////////////////////////////
 
-router
-  .route("/user/:userId/posts/:postId")
-  .get(
-    validators.param("userId").notEmpty(),
-    validators.param("postId").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    userHandles.get_users_userId_posts_postId()
-  )
-  .put(
-    validators.param("userId").notEmpty(),
-    validators.param("postId").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    userHandles.put_users_userId_posts_postId()
-  )
-  .delete(
-    //TODO add a middlware to check acces to this post
-    validators.param("userId").notEmpty(),
-    validators.param("postId").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    userHandles.delete_users_userId_posts_postId()
-  );
-
-router
-  .route("/user/:userId/posts/:postId/duplicate")
-  .post(
-    validators.param("userId").notEmpty(),
-    validators.param("postId").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    userHandles.post_users_userId_posts_postId_duplicate()
-  );
 /////////////////////////////////////////////////////////////////
 
 router

@@ -1,7 +1,7 @@
 import { Request, RequestHandler, Response } from "express";
 import { withTryCatch } from "../utils/error";
 import { User } from "../types/user";
-import { AnyRecord } from "../types/general";
+import { AnyRecord, RequestWithMeta } from "../types/general";
 import { ServerResponse } from "http";
 import { postServices } from "../features/post/services";
 import { isEqualIds } from "../utils/general";
@@ -59,7 +59,7 @@ export const isUserBusinessOwner: RequestHandler = async (req, res, next) => {
 };
 
 export const isUserThisBusinessOwner: RequestHandler = async (
-  req,
+  req: RequestWithMeta,
   res,
   next
 ) => {
@@ -82,18 +82,58 @@ export const isUserThisBusinessOwner: RequestHandler = async (
 
   const business = await businessServices.findOne({
     res,
+    req,
     routeName,
   });
 
   if (business instanceof ServerResponse) return business;
 
   if (user._id.toString() === business.createdBy.toString()) {
+    req["business"] = business;
     return next();
   }
 
   get401Response({
     res,
     json: { message: "The user has not access to this business" },
+  });
+};
+
+export const isUserThisPostOwner: RequestHandler = async (req, res, next) => {
+  const user = req.user as User;
+  const postId = req.params.postId;
+
+  if (!user) {
+    return get404Response({
+      res,
+      json: { message: "user not found" },
+    });
+  }
+
+  if (!postId) {
+    return get404Response({
+      res,
+      json: { message: "routeName not found" },
+    });
+  }
+
+  const post = await postServices.getOne({
+    res,
+    req,
+    postId,
+  });
+
+  if (post instanceof ServerResponse) return post;
+
+  if (user._id.toString() === post.createdBy.toString()) {
+    //@ts-expect-error ignore
+    req["post"] = post;
+    return next();
+  }
+
+  get401Response({
+    res,
+    json: { message: "The user has not access to this post" },
   });
 };
 
@@ -167,6 +207,7 @@ export const verifyPost: RequestHandler = (req, res, next) => {
 
     const out = await postServices.getOne({
       res,
+      req,
       postId,
     });
 

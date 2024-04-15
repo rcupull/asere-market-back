@@ -71,6 +71,7 @@ const post_signUp: () => RequestHandler = () => {
         password,
         canCreateBusiness,
         res,
+        req,
       });
 
       if (newUser instanceof ServerResponse) return;

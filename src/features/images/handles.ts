@@ -26,7 +26,7 @@ const get_delete_one_image: () => RequestHandler = () => {
     withTryCatch(req, res, async () => {
       const { imageSrc } = req.body;
 
-      const out = await imagesServices.deleteOne({ src: imageSrc, res });
+      const out = await imagesServices.deleteOne({ src: imageSrc, res, req });
 
       if (out instanceof ServerResponse) return out;
 

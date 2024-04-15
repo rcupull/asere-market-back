@@ -82,3 +82,7 @@ export const get201Response = ({
 }) => {
   return getResponse({ res, status: 201, json });
 };
+
+export const getPostNotFoundResponse = ({ res }: { res: Response }) => {
+  return get404Response({ res, json: { message: "Post not found" } });
+};

@@ -1,7 +1,7 @@
 import { AnyRecord } from "../types/general";
 import { Path } from "../types/paths";
 import { set } from "./general";
-import mongose from "mongoose";
+import mongose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import { SECRET_ACCESS_TOKEN } from "../constants/auth";
 
@@ -30,7 +30,7 @@ export const closeTestDbConnectionAsync = async () => {
   return mongose.connection.close();
 };
 
-export const generateToken = (id: string | mongose.Types.ObjectId) => {
+export const generateToken = (id: string | Schema.Types.ObjectId) => {
   return jwt.sign(
     {
       id,

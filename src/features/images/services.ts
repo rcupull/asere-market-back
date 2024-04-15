@@ -52,7 +52,7 @@ const deleteDir: QueryHandle<{
 const deleteOldImages: QueryHandle<{
   newImagesSrcs: Array<Image> | undefined;
   oldImagesSrcs: Array<Image> | undefined;
-}> = async ({ newImagesSrcs, oldImagesSrcs, res }) => {
+}> = async ({ newImagesSrcs, oldImagesSrcs, res, req }) => {
   if (!oldImagesSrcs?.length || !newImagesSrcs?.length) {
     return;
   }
@@ -62,7 +62,7 @@ const deleteOldImages: QueryHandle<{
   );
 
   imagesToRemove.forEach(({ src }) => {
-    deleteOne({ src, res });
+    deleteOne({ src, res, req });
   });
 };
 

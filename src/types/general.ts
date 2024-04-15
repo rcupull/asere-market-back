@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { ServerResponse } from "http";
 import {
   ApplySchemaOptions,
@@ -7,16 +7,23 @@ import {
   ResolveSchemaOptions,
   Schema,
 } from "mongoose";
+import { Post } from "./post";
+import { Business } from "./business";
 
 export type AnyRecord = Record<string, any>;
 
 export interface BaseIdentity {
-  _id: string;
+  _id: Schema.Types.ObjectId;
   createdAt: string;
 }
 
+export type RequestWithMeta = Request & {
+  post?: Post;
+  business?: Business;
+};
+
 export type QueryHandle<Args extends AnyRecord = AnyRecord, R = void> = (
-  args: Args & { res: Response }
+  args: Args & { res: Response; req: RequestWithMeta }
 ) => Promise<R | ServerResponse>;
 
 export type PaymentPlanType = "free" | "beginner" | "professional" | "company";

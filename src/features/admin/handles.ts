@@ -33,6 +33,7 @@ const del_users_userId: () => RequestHandler = () => {
        */
       const out = await imagesServices.deleteDir({
         res,
+        req,
         userId,
       });
 

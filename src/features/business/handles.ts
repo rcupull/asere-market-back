@@ -17,6 +17,7 @@ const get_business: () => RequestHandler = () => {
 
       const out = await businessServices.getAll({
         res,
+        req,
         paginateOptions,
         routeNames,
         search,
@@ -39,6 +40,7 @@ const get_business_routeName: () => RequestHandler = () => {
 
       const out = await businessServices.findOne({
         res,
+        req,
         routeName,
       });
 
@@ -60,6 +62,7 @@ const update_business_post_categories: () => RequestHandler = () => {
 
       const business = await businessServices.findOne({
         res,
+        req,
         routeName,
       });
 
@@ -80,6 +83,7 @@ const update_business_post_categories: () => RequestHandler = () => {
         //
         out = await postServices.updateMany({
           res,
+          req,
           query: {
             routeName,
           },
@@ -94,6 +98,7 @@ const update_business_post_categories: () => RequestHandler = () => {
         //
         out = await businessServices.updateOne({
           res,
+          req,
           query: {
             routeName,
           },
@@ -116,6 +121,7 @@ const update_business_post_categories: () => RequestHandler = () => {
 
       out = await businessServices.updateOne({
         res,
+        req,
         query: {
           routeName,
         },
@@ -150,8 +156,9 @@ const post_business: () => RequestHandler = () => {
         category,
         name,
         routeName,
-        userId: user._id,
+        userId: user._id.toString(),
         res,
+        req,
       });
 
       if (out instanceof ServerResponse) return;
@@ -171,6 +178,7 @@ const put_business_routeName: () => RequestHandler = () => {
 
       const out = await businessServices.updateOne({
         res,
+        req,
         query: {
           routeName,
           createdBy: user._id,
@@ -195,8 +203,9 @@ const delete_business_routeName: () => RequestHandler = () => {
 
       const out = await businessServices.deleteOne({
         res,
+        req,
         routeName,
-        userId: user._id,
+        userId: user._id.toString(),
       });
 
       if (out instanceof ServerResponse) return;

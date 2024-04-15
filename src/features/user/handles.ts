@@ -1,9 +1,7 @@
-import { Request, RequestHandler, Response } from "express";
+import { RequestHandler } from "express";
 import { withTryCatch } from "../../utils/error";
 import { RequestWithPagination } from "../../middlewares/pagination";
 import { ServerResponse } from "http";
-import { businessServices } from "../business/services";
-import { Business } from "../../types/business";
 import { RequestWithUser } from "../../middlewares/verify";
 import { GetAllArgs, postServices } from "../post/services";
 import { paymentPlans } from "../../constants/plans";
@@ -24,6 +22,7 @@ const get_users_userId: () => RequestHandler = () => {
 
       const out = await userServices.getOne({
         res,
+        req,
         query: {
           _id: userId,
         },
@@ -54,6 +53,7 @@ const put_users_userId: () => RequestHandler = () => {
             _id: userId,
           },
           res,
+          req,
         });
 
         if (currentUser instanceof ServerResponse) return currentUser;
@@ -61,6 +61,7 @@ const put_users_userId: () => RequestHandler = () => {
         if (currentUser.profileImage) {
           await imagesServices.deleteOldImages({
             res,
+            req,
             newImagesSrcs: [profileImage],
             oldImagesSrcs: [currentUser.profileImage],
           });
@@ -72,6 +73,7 @@ const put_users_userId: () => RequestHandler = () => {
        */
       const out = await userServices.updateOne({
         res,
+        req,
         query: {
           _id: userId,
         },
@@ -88,89 +90,6 @@ const put_users_userId: () => RequestHandler = () => {
 /**
  *  //////////////////////////////////////////POSTS
  */
-
-const get_users_userId_posts_postId: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { params } = req;
-      const { postId } = params;
-
-      const out = await postServices.getOne({ res, postId });
-
-      if (out instanceof ServerResponse) return;
-
-      res.send(out);
-    });
-  };
-};
-
-const put_users_userId_posts_postId: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { params, body } = req;
-      const { postId } = params;
-
-      const { images } = body as Post;
-
-      if (images?.length) {
-        const currentPost = await postServices.getOne({
-          postId,
-          res,
-        });
-
-        if (currentPost instanceof ServerResponse) return currentPost;
-
-        await imagesServices.deleteOldImages({
-          res,
-          newImagesSrcs: body.images,
-          oldImagesSrcs: currentPost.images,
-        });
-      }
-
-      const out = await postServices.updateOne({
-        res,
-        query: {
-          _id: postId,
-        },
-        update: body,
-      });
-
-      if (out instanceof ServerResponse) return;
-
-      res.send(out);
-    });
-  };
-};
-
-const delete_users_userId_posts_postId: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { params } = req;
-      const { postId, userId } = params;
-
-      const currentPost = await postServices.getOne({
-        postId,
-        res,
-      });
-
-      if (currentPost instanceof ServerResponse) return currentPost;
-
-      /**
-       * Removing the post
-       */
-      const out = await postServices.deleteOne({
-        res,
-        postId,
-        routeName: currentPost.routeName,
-        userId,
-      });
-
-      if (out instanceof ServerResponse) return out;
-
-      res.send(out);
-    });
-  };
-};
 
 const get_users_userId_payment_plan: () => RequestHandler = () => {
   return (req, res) => {
@@ -233,6 +152,7 @@ const delete_users_userId_business_routeName_bulkActions_posts: () => RequestHan
 
           const out = await postServices.deleteMany({
             res,
+            req,
             userId,
             postIds: ids,
             routeName,
@@ -244,6 +164,7 @@ const delete_users_userId_business_routeName_bulkActions_posts: () => RequestHan
 
           const posts = await postServices.getAllWithOutPagination({
             res,
+            req,
             routeNames: [routeName],
             createdBy: userId,
             postCategoriesMethod,
@@ -255,8 +176,9 @@ const delete_users_userId_business_routeName_bulkActions_posts: () => RequestHan
 
           const out = await postServices.deleteMany({
             res,
+            req,
             userId,
-            postIds: posts.map(({ _id }) => _id),
+            postIds: posts.map((post) => post._id.toString()),
             routeName,
           });
 
@@ -265,6 +187,7 @@ const delete_users_userId_business_routeName_bulkActions_posts: () => RequestHan
           // get all post
           const posts = await postServices.getAllWithOutPagination({
             res,
+            req,
             routeNames: [routeName],
             createdBy: userId,
           });
@@ -273,8 +196,9 @@ const delete_users_userId_business_routeName_bulkActions_posts: () => RequestHan
 
           const out = await postServices.deleteMany({
             res,
+            req,
             userId,
-            postIds: posts.map(({ _id }) => _id),
+            postIds: posts.map((post) => post._id.toString()),
             routeName,
           });
 
@@ -309,6 +233,7 @@ const put_users_userId_business_routeName_bulkActions_posts: () => RequestHandle
         if (ids?.length) {
           const out = await postServices.updateMany({
             res,
+            req,
             query: {
               _id: { $in: ids },
             },
@@ -324,6 +249,7 @@ const put_users_userId_business_routeName_bulkActions_posts: () => RequestHandle
 
           const posts = await postServices.getAllWithOutPagination({
             res,
+            req,
             routeNames: [routeName],
             createdBy: userId,
             postCategoriesMethod,
@@ -335,6 +261,7 @@ const put_users_userId_business_routeName_bulkActions_posts: () => RequestHandle
 
           const out = await postServices.updateMany({
             res,
+            req,
             query: {
               _id: { $in: posts.map(({ _id }) => _id) },
             },
@@ -348,6 +275,7 @@ const put_users_userId_business_routeName_bulkActions_posts: () => RequestHandle
           // get all posts
           const posts = await postServices.getAllWithOutPagination({
             res,
+            req,
             routeNames: [routeName],
             createdBy: userId,
           });
@@ -356,6 +284,7 @@ const put_users_userId_business_routeName_bulkActions_posts: () => RequestHandle
 
           const out = await postServices.updateMany({
             res,
+            req,
             query: {
               _id: { $in: posts.map(({ _id }) => _id) },
             },
@@ -381,6 +310,7 @@ const post_users_userId_shopping_car: () => RequestHandler = () => {
 
       const user = await userServices.getOne({
         res,
+        req,
         query: {
           _id: userId,
         },
@@ -395,6 +325,7 @@ const post_users_userId_shopping_car: () => RequestHandler = () => {
       if (existMeta) {
         await userServices.updateOne({
           res,
+          req,
           query: {
             _id: userId,
           },
@@ -417,6 +348,7 @@ const post_users_userId_shopping_car: () => RequestHandler = () => {
       } else {
         await userServices.updateOne({
           res,
+          req,
           query: {
             _id: userId,
           },
@@ -440,10 +372,6 @@ const post_users_userId_shopping_car: () => RequestHandler = () => {
 export const userHandles = {
   get_users_userId,
   put_users_userId,
-  //
-  get_users_userId_posts_postId,
-  put_users_userId_posts_postId,
-  delete_users_userId_posts_postId,
   //
   get_users_userId_payment_plan,
   post_users_userId_payment_plan_purchase,
