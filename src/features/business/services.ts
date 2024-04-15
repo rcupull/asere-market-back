@@ -173,7 +173,6 @@ const deleteOne: QueryHandle<{
     routeName,
     res,
     req,
-    userId,
   });
 
   return out;

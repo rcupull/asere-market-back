@@ -71,28 +71,6 @@ router
 /////////////////////////////////////////////////////////////////
 
 router
-  .route("/user/:userId/business/:routeName/bulkActions/posts")
-  .put(
-    validators.param("userId").notEmpty(),
-    validators.param("routeName").notEmpty(),
-    validators.body("update").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    userHandles.put_users_userId_business_routeName_bulkActions_posts()
-  )
-  .delete(
-    validators.param("userId").notEmpty(),
-    validators.param("routeName").notEmpty(),
-    validators.handle,
-    isLogged,
-    isUserIdAccessible,
-    userHandles.delete_users_userId_business_routeName_bulkActions_posts()
-  );
-
-/////////////////////////////////////////////////////////////////
-
-router
   .route("/user/:userId/shopping/car")
   .post(
     validators.param("userId").notEmpty(),

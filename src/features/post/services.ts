@@ -157,25 +157,31 @@ const getOne: QueryHandle<
 const deleteMany: QueryHandle<{
   routeName: string;
   postIds?: Array<string>;
-  userId: string;
-}> = async ({ res, req, routeName, userId, postIds: postIdsT }) => {
+}> = async ({ res, req, routeName, postIds: postIdsT }) => {
   let postIds: Array<string> = postIdsT || [];
 
-  if (!postIds.length) {
-    const allPost = await PostModel.find({
-      routeName,
-      createdBy: userId,
-    });
+  let postToRemove: Array<Post> = [];
 
-    postIds = allPost.map((post) => post._id.toString());
+  if (postIds.length) {
+    postToRemove = await PostModel.find({
+      _id: { $in: postIds },
+    });
+  } else {
+    postToRemove = await PostModel.find({
+      routeName,
+    });
   }
 
   if (postIds?.length) {
-    const promises = postIds.map((postId) => {
+    const promises = postToRemove.map((post) => {
       return deleteOne({
         res,
-        req,
-        postId,
+        //@ts-expect-error ignore
+        req: {
+          ...req,
+          post,
+        },
+        postId: post._id.toString(),
       });
     });
 
@@ -217,6 +223,8 @@ const addOne: QueryHandle<
   Pick<
     Post,
     | "currency"
+    | "hidden"
+    | "hiddenBusiness"
     | "description"
     | "images"
     | "price"

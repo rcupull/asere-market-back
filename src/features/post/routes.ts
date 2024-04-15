@@ -58,3 +58,26 @@ router
     isUserThisPostOwner,
     postHandles.delete_posts_postId()
   );
+
+/////////////////////////////////////////////////////////////////
+
+router
+  .route("/posts/bulkActions/delete")
+  .delete(
+    validators.body("routeName").notEmpty(),
+    validators.handle,
+    isLogged,
+    isUserThisBusinessOwner,
+    postHandles.bulk_action_delete()
+  );
+
+router
+  .route("/posts/bulkActions/update")
+  .put(
+    validators.body("routeName").notEmpty(),
+    validators.body("update").notEmpty(),
+    validators.handle,
+    isLogged,
+    isUserThisBusinessOwner,
+    postHandles.bulk_action_update()
+  );

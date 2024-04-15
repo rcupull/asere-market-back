@@ -1,6 +1,6 @@
 import { RequestHandler } from "../../types/general";
 import { withTryCatch } from "../../utils/error";
-import { postServices } from "./services";
+import { GetAllArgs, postServices } from "./services";
 import { ServerResponse } from "http";
 import { User } from "../../types/user";
 import { imagesServices } from "../images/services";
@@ -9,6 +9,7 @@ import {
   get400Response,
   getPostNotFoundResponse,
 } from "../../utils/server-response";
+import { isEmpty } from "../../utils/general";
 
 const get_posts: () => RequestHandler = () => {
   return (req, res) => {
@@ -66,11 +67,13 @@ const post_posts: () => RequestHandler = () => {
     withTryCatch(req, res, async () => {
       const user = req.user as User;
       const { body } = req;
-      const { name, routeName } = body;
+      const { name, routeName, hidden, hiddenBusiness } = body;
 
       const out = await postServices.addOne({
         name,
         routeName,
+        hidden,
+        hiddenBusiness,
         createdBy: user._id,
         res,
         req,
@@ -174,6 +177,167 @@ const delete_posts_postId: () => RequestHandler = () => {
   };
 };
 
+const bulk_action_delete: () => RequestHandler = () => {
+  return (req, res) => {
+    withTryCatch(req, res, async () => {
+      const { body } = req;
+
+      const { ids, query, routeName } = body as {
+        ids?: Array<string>;
+        all?: boolean;
+        routeName: string;
+        query?: Pick<
+          GetAllArgs,
+          "postCategoriesMethod" | "postCategoriesTags" | "search"
+        >;
+      };
+
+      if (ids?.length) {
+        // delete selected posts
+
+        const out = await postServices.deleteMany({
+          res,
+          req,
+          postIds: ids,
+          routeName,
+        });
+
+        if (out instanceof ServerResponse) return out;
+      } else if (!isEmpty(query)) {
+        const { postCategoriesMethod, postCategoriesTags, search } = query;
+
+        const posts = await postServices.getAllWithOutPagination({
+          res,
+          req,
+          routeNames: [routeName],
+          postCategoriesMethod,
+          postCategoriesTags,
+          search,
+        });
+
+        if (posts instanceof ServerResponse) return posts;
+
+        const out = await postServices.deleteMany({
+          res,
+          req,
+          postIds: posts.map((post) => post._id.toString()),
+          routeName,
+        });
+
+        if (out instanceof ServerResponse) return out;
+      } else {
+        // get all post
+        const posts = await postServices.getAllWithOutPagination({
+          res,
+          req,
+          routeNames: [routeName],
+        });
+
+        if (posts instanceof ServerResponse) return posts;
+
+        const out = await postServices.deleteMany({
+          res,
+          req,
+          postIds: posts.map((post) => post._id.toString()),
+          routeName,
+        });
+
+        if (out instanceof ServerResponse) return out;
+      }
+
+      res.send();
+    });
+  };
+};
+const bulk_action_update: () => RequestHandler = () => {
+  return (req, res) => {
+    withTryCatch(req, res, async () => {
+      const { body } = req;
+
+      const { ids, update, query, routeName } = body as {
+        ids?: Array<string>;
+        all?: boolean;
+        routeName: string;
+        update: {
+          hidden: boolean;
+        };
+        query?: Pick<
+          GetAllArgs,
+          "postCategoriesMethod" | "postCategoriesTags" | "search"
+        >;
+      };
+
+      const { hidden } = update || {};
+
+      if (ids?.length) {
+        const out = await postServices.updateMany({
+          res,
+          req,
+          query: {
+            _id: { $in: ids },
+          },
+          update: {
+            hidden,
+          },
+        });
+
+        if (out instanceof ServerResponse) return out;
+      } else if (!isEmpty(query)) {
+        // TODO esto puede ser mejorado en una sola quuery
+        const { postCategoriesMethod, postCategoriesTags, search } = query;
+
+        const posts = await postServices.getAllWithOutPagination({
+          res,
+          req,
+          routeNames: [routeName],
+          postCategoriesMethod,
+          postCategoriesTags,
+          search,
+        });
+
+        if (posts instanceof ServerResponse) return posts;
+
+        const out = await postServices.updateMany({
+          res,
+          req,
+          query: {
+            _id: { $in: posts.map(({ _id }) => _id) },
+          },
+          update: {
+            hidden,
+          },
+        });
+
+        if (out instanceof ServerResponse) return out;
+      } else {
+        // get all posts
+        const posts = await postServices.getAllWithOutPagination({
+          res,
+          req,
+          routeNames: [routeName],
+        });
+
+        if (posts instanceof ServerResponse) return posts;
+
+        const out = await postServices.updateMany({
+          res,
+          req,
+          query: {
+            _id: { $in: posts.map(({ _id }) => _id) },
+          },
+          update: {
+            hidden,
+          },
+        });
+
+        if (out instanceof ServerResponse) return out;
+      }
+
+      res.send();
+    });
+  };
+};
+
 export const postHandles = {
   get_posts,
   post_posts,
@@ -182,4 +346,7 @@ export const postHandles = {
   get_posts_postId,
   put_posts_postId,
   delete_posts_postId,
+  //
+  bulk_action_delete,
+  bulk_action_update,
 };
