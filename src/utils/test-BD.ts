@@ -25,6 +25,7 @@ export const fillBD = async (args?: {
     password: "password_123_user1",
     passwordVerbose: "password_123_user1",
     validated: true,
+    canCreateBusiness: true,
     ...overrideUser1,
   });
   await user1.save();

@@ -1,13 +1,13 @@
 import supertest from "supertest";
-import { BusinessModel } from "../../schemas/business";
 import { app } from "../../server";
 import {
   dropTestDbConnectionAsync,
+  generateToken,
   setAnyString,
 } from "../../utils/test-utils";
-import { objectIds } from "../../utils/test-dummies";
 import { Business } from "../../types/business";
 import { fillBD } from "../../utils/test-BD";
+import { query } from "express";
 
 describe("/business", () => {
   afterEach(async () => {
@@ -78,6 +78,78 @@ describe("/business", () => {
       .then((response) => {
         expect(response.body.data.length).toEqual(4);
       });
+  });
+
+  it("GET should return all business", async () => {
+    await fillBD();
+
+    await supertest(app)
+      .get(`/business`)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.data.length).toEqual(4);
+      });
+  });
+
+  it("POST should fail if the user can not create a business", async () => {
+    const { user1, business1User1 } = await fillBD({
+      overrideUser1: {
+        canCreateBusiness: false,
+      },
+    });
+
+    await supertest(app)
+      .post(`/business`)
+      .send({
+        name: "newBusiness",
+        routeName: "newBusiness",
+        category: "clothing",
+      })
+      .auth(generateToken(user1._id), { type: "bearer" })
+      .expect(401);
+  });
+
+  it("POST should fail if the business already exists", async () => {
+    const { user1, business1User1 } = await fillBD();
+
+    await supertest(app)
+      .post(`/business`)
+      .send({
+        name: "newBusiness",
+        routeName: business1User1.routeName, // exiting bussiness
+        category: "clothing",
+      })
+      .auth(generateToken(user1._id), { type: "bearer" })
+      .expect(400);
+  });
+
+  it("POST", async () => {
+    const { user1 } = await fillBD();
+
+    await supertest(app)
+      .post(`/business`)
+      .send({
+        name: "newBusiness",
+        routeName: "newBusiness",
+        category: "clothing",
+      })
+      .auth(generateToken(user1._id), { type: "bearer" })
+      .expect(200);
+
+    await supertest(app).get(`/business/newBusiness`).expect(200);
+  });
+
+  it("POST should fail if not autenticated", async () => {
+    await fillBD();
+
+    await supertest(app)
+      .post(`/business`)
+      .send({
+        name: "newBusiness",
+        routeName: "newBusiness",
+        category: "clothing",
+      })
+      .expect(401);
   });
 });
 

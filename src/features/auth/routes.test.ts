@@ -39,16 +39,15 @@ describe("/auth/sign-in", () => {
         expect(token).toBeTruthy();
 
         expect(user).toMatchInlineSnapshot(
-          setAnyString<User>(
-            "_id",
-            "createdAt",
-            "payment.planHistory.0.dateOfPurchase"
-          ),
-          `
+  setAnyString<User>(
+    "_id",
+    "createdAt",
+    "payment.planHistory.0.dateOfPurchase"
+  ), `
 {
   "__v": 0,
   "_id": Anything,
-  "canCreateBusiness": false,
+  "canCreateBusiness": true,
   "createdAt": Anything,
   "email": "user1@gmail.com",
   "name": "user1",
@@ -64,10 +63,10 @@ describe("/auth/sign-in", () => {
   },
   "profileImage": null,
   "role": "user",
+  "shoppingCart": null,
   "validated": true,
 }
-`
-        );
+`);
       });
   });
 });

@@ -1,6 +1,5 @@
 import {
   closeTestDbConnectionAsync,
-  dropTestDbConnectionAsync,
   openTestDbConnectionAsync,
 } from "./src/utils/test-utils";
 
