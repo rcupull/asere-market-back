@@ -88,6 +88,15 @@ const BusinessSchema = new Schema<Business>({
     description: { type: String },
   },
   whatsAppPhoneNumber: { type: String },
+  salesStrategy: {
+    type: String,
+    enum: [
+      "none",
+      "whatsAppWithOwner_pickUpProduct",
+      "addToCart_whatsAppWithOwner_pickUpProduct",
+    ],
+    default: "none",
+  },
 });
 
 BusinessSchema.plugin(mongoosePaginate);

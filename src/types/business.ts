@@ -123,4 +123,7 @@ export interface Business extends BaseIdentity {
   layouts?: BusinessLayouts;
   aboutUsPage?: BusinessAboutUsPage;
   whatsAppPhoneNumber?: string;
+  salesStrategy?:
+    | "whatsAppWithOwner_pickUpProduct"
+    | "addToCart_whatsAppWithOwner_pickUpProduct";
 }
