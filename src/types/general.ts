@@ -21,7 +21,7 @@ export type AnyRecord = Record<string, any>;
 
 export interface BaseIdentity {
   _id: Schema.Types.ObjectId;
-  createdAt: string;
+  createdAt: Date;
 }
 
 declare global {

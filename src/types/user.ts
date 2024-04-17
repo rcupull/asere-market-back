@@ -10,6 +10,7 @@ export type UserRole = "user" | "admin";
 export interface UserShoppingCart {
   added: Array<{
     postId: string;
+    routeName: string;
     count: number;
     lastUpdatedDate: Date;
   }>;

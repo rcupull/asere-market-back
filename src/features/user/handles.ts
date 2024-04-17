@@ -2,13 +2,15 @@ import { RequestHandler } from "../../types/general";
 import { withTryCatch } from "../../utils/error";
 import { ServerResponse } from "http";
 import { RequestWithUser } from "../../middlewares/verify";
-import { GetAllArgs, postServices } from "../post/services";
 import { paymentPlans } from "../../constants/plans";
 import { imagesServices } from "../images/services";
 import { userServices } from "./services";
 import { User } from "../../types/user";
 import { UserModel } from "../../schemas/user";
-import { isEmpty } from "../../utils/general";
+import {
+  get404Response,
+  getUserNotFoundResponse,
+} from "../../utils/server-response";
 
 const get_users_userId: () => RequestHandler = () => {
   return (req, res) => {
@@ -113,7 +115,7 @@ const post_users_userId_payment_plan_purchase: () => RequestHandler = () => {
             "payment.planHistory": [
               {
                 planType,
-                dateOfPurchase: new Date().toISOString(),
+                dateOfPurchase: new Date(),
                 trialMode: false,
                 status: "validatingPurchase",
                 validationPurchaseCode,
@@ -128,22 +130,16 @@ const post_users_userId_payment_plan_purchase: () => RequestHandler = () => {
   };
 };
 
-const post_users_userId_shopping_car: () => RequestHandler = () => {
+const post_users_shopping_car: () => RequestHandler = () => {
   return (req, res) => {
     withTryCatch(req, res, async () => {
-      const { params, body } = req as RequestWithUser;
-      const { userId } = params;
-      const { postId } = body;
+      const { body, user } = req;
 
-      const user = await userServices.getOne({
-        res,
-        req,
-        query: {
-          _id: userId,
-        },
-      });
+      if (!user) {
+        return getUserNotFoundResponse({ res });
+      }
 
-      if (user instanceof ServerResponse) return user;
+      const { postId, routeName, amountToAdd = 1 } = body;
 
       const existMeta = !!user.shoppingCart?.added.find(
         ({ postId: _postId }) => _postId === postId
@@ -154,14 +150,14 @@ const post_users_userId_shopping_car: () => RequestHandler = () => {
           res,
           req,
           query: {
-            _id: userId,
+            _id: user._id,
           },
           update: {
             $set: {
               "shoppingCart.added.$[meta].lastUpdatedDate": new Date(),
             },
             $inc: {
-              "shoppingCart.added.$[meta].count": 1,
+              "shoppingCart.added.$[meta].count": amountToAdd,
             },
           },
           options: {
@@ -177,19 +173,71 @@ const post_users_userId_shopping_car: () => RequestHandler = () => {
           res,
           req,
           query: {
-            _id: userId,
+            _id: user._id,
           },
           update: {
             $push: {
-              "shoppingCar.added": {
+              "shoppingCart.added": {
                 postId,
-                count: 1,
+                count: amountToAdd,
+                routeName,
                 lastUpdatedDate: new Date(),
               },
             },
           },
         });
       }
+
+      res.send({});
+    });
+  };
+};
+
+const delete_users_shopping_car: () => RequestHandler = () => {
+  return (req, res) => {
+    withTryCatch(req, res, async () => {
+      const { body, user } = req;
+
+      if (!user) {
+        return getUserNotFoundResponse({ res });
+      }
+
+      const { routeName, postId } = body;
+
+      if (!user.shoppingCart?.added.length) {
+        return get404Response({
+          res,
+          json: {
+            message: "Has not post to remove from cart",
+          },
+        });
+      }
+
+      const getNewAdd = () => {
+        if (postId) {
+          return user.shoppingCart?.added.filter((e) => e.postId !== postId);
+        }
+        if (routeName) {
+          return user.shoppingCart?.added.filter(
+            (e) => e.routeName !== routeName
+          );
+        }
+
+        return [];
+      };
+
+      await userServices.updateOne({
+        res,
+        req,
+        query: {
+          _id: user._id,
+        },
+        update: {
+          shoppingCart: {
+            added: getNewAdd(),
+          },
+        },
+      });
 
       res.send({});
     });
@@ -203,5 +251,6 @@ export const userHandles = {
   get_users_userId_payment_plan,
   post_users_userId_payment_plan_purchase,
   // bulk actions
-  post_users_userId_shopping_car,
+  post_users_shopping_car,
+  delete_users_shopping_car,
 };

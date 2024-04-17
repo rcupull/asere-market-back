@@ -52,12 +52,12 @@ router
 /////////////////////////////////////////////////////////////////
 
 router
-  .route("/user/:userId/shopping/car")
+  .route("/user/shoppingCart")
   .post(
-    validators.param("userId").notEmpty(),
     validators.body("postId").notEmpty(),
+    validators.body("routeName").notEmpty(),
     validators.handle,
     isLogged,
-    isUserIdAccessible,
-    userHandles.post_users_userId_shopping_car()
-  );
+    userHandles.post_users_shopping_car()
+  )
+  .delete(validators.handle, isLogged, userHandles.delete_users_shopping_car());

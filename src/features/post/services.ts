@@ -13,6 +13,7 @@ import {
 export interface GetAllArgs {
   paginateOptions?: PaginateOptions;
   routeNames?: Array<string>;
+  postsIds?: Array<string>;
   search?: string;
   hidden?: boolean;
   hiddenBusiness?: boolean;
@@ -47,6 +48,7 @@ export type PostUpdate = Partial<
 const getAll: QueryHandle<GetAllArgs, PaginateResult<Post>> = async ({
   paginateOptions = {},
   routeNames,
+  postsIds,
   search,
   hiddenBusiness,
   hidden,
@@ -83,6 +85,10 @@ const getAll: QueryHandle<GetAllArgs, PaginateResult<Post>> = async ({
 
   if (routeNames?.length) {
     filterQuery.routeName = { $in: routeNames };
+  }
+
+  if (postsIds?.length) {
+    filterQuery._id = { $in: postsIds };
   }
 
   ///////////////////////////////////////////////////////////////////

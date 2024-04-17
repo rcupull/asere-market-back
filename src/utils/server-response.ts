@@ -86,3 +86,7 @@ export const get201Response = ({
 export const getPostNotFoundResponse = ({ res }: { res: Response }) => {
   return get404Response({ res, json: { message: "Post not found" } });
 };
+
+export const getUserNotFoundResponse = ({ res }: { res: Response }) => {
+  return get404Response({ res, json: { message: "User not found" } });
+};

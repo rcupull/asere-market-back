@@ -47,7 +47,7 @@ const UserSchema = new Schema<User>({
       default: [
         {
           planType: "free",
-          dateOfPurchase: new Date().toISOString(),
+          dateOfPurchase: new Date(),
           trialMode: true,
           status: "current",
         },
@@ -56,11 +56,13 @@ const UserSchema = new Schema<User>({
   },
   shoppingCart: {
     type: {
+      _id: false,
       added: {
         type: [
           {
             _id: false,
             postId: { type: String, required: true },
+            routeName: { type: String, required: true },
             lastUpdatedDate: { type: Date, required: true },
             count: { type: Number, required: true },
           },

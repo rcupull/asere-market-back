@@ -5,10 +5,7 @@ import { ServerResponse } from "http";
 import { User } from "../../types/user";
 import { imagesServices } from "../images/services";
 import { Post } from "../../types/post";
-import {
-  get400Response,
-  getPostNotFoundResponse,
-} from "../../utils/server-response";
+import { getPostNotFoundResponse } from "../../utils/server-response";
 import { isEmpty } from "../../utils/general";
 
 const get_posts: () => RequestHandler = () => {
@@ -22,12 +19,14 @@ const get_posts: () => RequestHandler = () => {
         postCategoriesTags,
         postCategoriesMethod,
         includeHidden,
+        postsIds,
       } = query;
 
       const out = await postServices.getAll({
         res,
         req,
         paginateOptions,
+        postsIds,
         routeNames,
         search,
         hidden: includeHidden ? undefined : false,
