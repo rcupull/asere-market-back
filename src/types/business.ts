@@ -126,4 +126,7 @@ export interface Business extends BaseIdentity {
   salesStrategy?:
     | "whatsAppWithOwner_pickUpProduct"
     | "addToCart_whatsAppWithOwner_pickUpProduct";
+  salesMeta?: {
+    purchaseRequestTopInfo?: string;
+  };
 }

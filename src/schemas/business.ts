@@ -97,6 +97,9 @@ const BusinessSchema = new Schema<Business>({
     ],
     default: "none",
   },
+  salesMeta: {
+    purchaseRequestTopInfo: { type: String },
+  },
 });
 
 BusinessSchema.plugin(mongoosePaginate);
