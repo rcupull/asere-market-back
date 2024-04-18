@@ -7,15 +7,6 @@ import {
 
 export type UserRole = "user" | "admin";
 
-export interface UserShoppingCart {
-  added: Array<{
-    postId: string;
-    routeName: string;
-    count: number;
-    lastUpdatedDate: Date;
-  }>;
-}
-
 export interface User extends BaseIdentity {
   name: string;
   email: string;
@@ -37,5 +28,4 @@ export interface User extends BaseIdentity {
       }
     ];
   };
-  shoppingCart?: UserShoppingCart;
 }

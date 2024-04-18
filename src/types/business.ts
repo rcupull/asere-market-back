@@ -104,6 +104,10 @@ export interface BusinessAboutUsPage {
   description?: string; // checkeditor text
 }
 
+export type BusinessSalesStrategy =
+  | "whatsAppWithOwner_pickUpProduct"
+  | "addToCart_whatsAppWithOwner_pickUpProduct";
+
 export interface Business extends BaseIdentity {
   name: string;
   routeName: string;
@@ -123,9 +127,7 @@ export interface Business extends BaseIdentity {
   layouts?: BusinessLayouts;
   aboutUsPage?: BusinessAboutUsPage;
   whatsAppPhoneNumber?: string;
-  salesStrategy?:
-    | "whatsAppWithOwner_pickUpProduct"
-    | "addToCart_whatsAppWithOwner_pickUpProduct";
+  salesStrategy?: BusinessSalesStrategy;
   salesMeta?: {
     purchaseRequestTopInfo?: string;
   };

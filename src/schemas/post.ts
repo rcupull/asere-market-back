@@ -5,7 +5,7 @@ import { createdAtSchemaDefinition } from "../utils/schemas";
 import { BusinessModel } from "./business";
 import { PostPageLayoutSchema } from "./common";
 
-const PostSchema = new Schema<Post>({
+export const PostSchema = new Schema<Post>({
   ...createdAtSchemaDefinition,
   routeName: { type: String, required: true },
   amountAvailable: { type: Number },

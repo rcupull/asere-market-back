@@ -7,10 +7,6 @@ import { imagesServices } from "../images/services";
 import { userServices } from "./services";
 import { User } from "../../types/user";
 import { UserModel } from "../../schemas/user";
-import {
-  get404Response,
-  getUserNotFoundResponse,
-} from "../../utils/server-response";
 
 const get_users_userId: () => RequestHandler = () => {
   return (req, res) => {
@@ -130,127 +126,10 @@ const post_users_userId_payment_plan_purchase: () => RequestHandler = () => {
   };
 };
 
-const post_users_shopping_car: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { body, user } = req;
-
-      if (!user) {
-        return getUserNotFoundResponse({ res });
-      }
-
-      const { postId, routeName, amountToAdd = 1 } = body;
-
-      const existMeta = !!user.shoppingCart?.added.find(
-        ({ postId: _postId }) => _postId === postId
-      );
-
-      if (existMeta) {
-        await userServices.updateOne({
-          res,
-          req,
-          query: {
-            _id: user._id,
-          },
-          update: {
-            $set: {
-              "shoppingCart.added.$[meta].lastUpdatedDate": new Date(),
-            },
-            $inc: {
-              "shoppingCart.added.$[meta].count": amountToAdd,
-            },
-          },
-          options: {
-            arrayFilters: [
-              {
-                "meta.postId": postId,
-              },
-            ],
-          },
-        });
-      } else {
-        await userServices.updateOne({
-          res,
-          req,
-          query: {
-            _id: user._id,
-          },
-          update: {
-            $push: {
-              "shoppingCart.added": {
-                postId,
-                count: amountToAdd,
-                routeName,
-                lastUpdatedDate: new Date(),
-              },
-            },
-          },
-        });
-      }
-
-      res.send({});
-    });
-  };
-};
-
-const delete_users_shopping_car: () => RequestHandler = () => {
-  return (req, res) => {
-    withTryCatch(req, res, async () => {
-      const { body, user } = req;
-
-      if (!user) {
-        return getUserNotFoundResponse({ res });
-      }
-
-      const { routeName, postId } = body;
-
-      if (!user.shoppingCart?.added.length) {
-        return get404Response({
-          res,
-          json: {
-            message: "Has not post to remove from cart",
-          },
-        });
-      }
-
-      const getNewAdd = () => {
-        if (postId) {
-          return user.shoppingCart?.added.filter((e) => e.postId !== postId);
-        }
-        if (routeName) {
-          return user.shoppingCart?.added.filter(
-            (e) => e.routeName !== routeName
-          );
-        }
-
-        return [];
-      };
-
-      await userServices.updateOne({
-        res,
-        req,
-        query: {
-          _id: user._id,
-        },
-        update: {
-          shoppingCart: {
-            added: getNewAdd(),
-          },
-        },
-      });
-
-      res.send({});
-    });
-  };
-};
-
 export const userHandles = {
   get_users_userId,
   put_users_userId,
   //
   get_users_userId_payment_plan,
   post_users_userId_payment_plan_purchase,
-  // bulk actions
-  post_users_shopping_car,
-  delete_users_shopping_car,
 };

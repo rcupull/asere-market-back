@@ -48,16 +48,3 @@ router
     isUserIdAccessible,
     userHandles.post_users_userId_payment_plan_purchase()
   );
-
-/////////////////////////////////////////////////////////////////
-
-router
-  .route("/user/shoppingCart")
-  .post(
-    validators.body("postId").notEmpty(),
-    validators.body("routeName").notEmpty(),
-    validators.handle,
-    isLogged,
-    userHandles.post_users_shopping_car()
-  )
-  .delete(validators.handle, isLogged, userHandles.delete_users_shopping_car());
