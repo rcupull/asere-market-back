@@ -30,7 +30,6 @@ export type PostUpdate = Partial<
     | "description"
     | "images"
     | "price"
-    | "amountAvailable"
     | "clothingSizes"
     | "colors"
     | "details"
@@ -42,6 +41,7 @@ export type PostUpdate = Partial<
     | "postCategoriesTags"
     | "discount"
     | "postPageLayout"
+    | "stockAmount"
   >
 >;
 
@@ -235,7 +235,6 @@ const addOne: QueryHandle<
     | "images"
     | "price"
     | "routeName"
-    | "amountAvailable"
     | "name"
     | "clothingSizes"
     | "colors"
@@ -244,6 +243,7 @@ const addOne: QueryHandle<
     | "createdBy"
     | "postPageLayout"
     | "postCategoriesTags"
+    | "stockAmount"
   >,
   Post
 > = async (args) => {
@@ -259,7 +259,6 @@ const updateOne: QueryHandle<{
   update: PostUpdate;
 }> = async ({ query, update }) => {
   const {
-    amountAvailable,
     clothingSizes,
     colors,
     details,
@@ -275,10 +274,10 @@ const updateOne: QueryHandle<{
     postCategoriesTags,
     discount,
     postPageLayout,
+    stockAmount,
   } = update;
 
   await PostModel.updateOne(query, {
-    amountAvailable,
     clothingSizes,
     colors,
     details,
@@ -294,6 +293,16 @@ const updateOne: QueryHandle<{
     postCategoriesTags,
     discount,
     postPageLayout,
+    stockAmount,
+  });
+};
+
+const updateStockAmount: QueryHandle<{
+  query: FilterQuery<Post>;
+  stockAmount: number;
+}> = async ({ query, stockAmount }) => {
+  await PostModel.updateOne(query, {
+    stockAmount,
   });
 };
 
@@ -313,4 +322,5 @@ export const postServices = {
   updateOne,
   updateMany,
   deleteOne,
+  updateStockAmount,
 };

@@ -59,3 +59,27 @@ export const set = <T extends AnyRecord = AnyRecord>(
 ): void => {
   dset(obj, path, value);
 };
+
+export const isNullOrUndefined = (
+  value: unknown
+): value is null | undefined => {
+  return value === null || value === undefined;
+};
+
+export const isNumber = (value: unknown): value is number => {
+  return typeof value === "number";
+};
+
+export const isString = (value: unknown): value is string => {
+  return typeof value === "string";
+};
+
+export const isArray = (value: unknown): value is Array<any> => {
+  return Array.isArray(value);
+};
+
+export const isNullOrUndefinedOrEmptyString = (
+  value: unknown
+): value is null | undefined | "" => {
+  return isNullOrUndefined(value) || value === "";
+};

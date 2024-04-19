@@ -321,9 +321,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "amountAvailable": {
-                    "example": "any"
-                  },
                   "currency": {
                     "example": "any"
                   },

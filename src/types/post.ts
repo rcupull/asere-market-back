@@ -28,13 +28,13 @@ export interface Post extends BaseIdentity {
   price?: number;
   discount?: number;
   currency?: PostCurrency;
-  amountAvailable?: number;
   reviews?: PostReviews;
   colors?: Array<PostColor>;
   highlights?: Array<string>;
   hidden?: boolean;
   hiddenBusiness?: boolean;
   postCategoriesTags?: Array<string>;
+  stockAmount?: number;
   // clothing
   clothingSizes?: Array<PostClothingSize>;
   //

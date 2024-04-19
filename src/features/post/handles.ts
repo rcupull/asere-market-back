@@ -72,7 +72,6 @@ const post_posts: () => RequestHandler = () => {
         routeName,
         hidden,
         hiddenBusiness,
-        amountAvailable,
         clothingSizes,
         colors,
         currency,
@@ -83,6 +82,7 @@ const post_posts: () => RequestHandler = () => {
         postPageLayout,
         price,
         postCategoriesTags,
+        stockAmount,
       } = body;
 
       const out = await postServices.addOne({
@@ -90,7 +90,6 @@ const post_posts: () => RequestHandler = () => {
         routeName,
         hidden,
         hiddenBusiness,
-        amountAvailable,
         clothingSizes,
         colors,
         currency,
@@ -101,6 +100,7 @@ const post_posts: () => RequestHandler = () => {
         postPageLayout,
         price,
         postCategoriesTags,
+        stockAmount,
         //
         createdBy: user._id,
         res,

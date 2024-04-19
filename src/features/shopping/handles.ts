@@ -3,6 +3,8 @@ import { withTryCatch } from "../../utils/error";
 import { ServerResponse } from "http";
 import { getUserNotFoundResponse } from "../../utils/server-response";
 import { shoppingServices } from "./services";
+import { postServices } from "../post/services";
+import { isNumber } from "../../utils/general";
 
 const get_shopping: () => RequestHandler = () => {
   return (req, res) => {
@@ -71,8 +73,59 @@ const post_shopping: () => RequestHandler = () => {
 
       const { postId, amountToAdd = 1, routeName } = body;
 
+      const post = await postServices.getOne({ postId, res, req });
+
+      if (post instanceof ServerResponse) return post;
+
+      if (isNumber(post.stockAmount)) {
+        /**
+         * habilitado el feature de stock amount
+         */
+        if (amountToAdd > post.stockAmount) {
+          /**
+           * la cantidad solicitada es mayor que la disponible
+           */
+          await shoppingServices.updateOrAddOne({
+            post,
+            routeName,
+            req,
+            res,
+            amountToAdd: post.stockAmount,
+          });
+
+          await postServices.updateStockAmount({
+            req,
+            res,
+            query: { _id: post._id },
+            stockAmount: 0,
+          });
+
+          return res.send({
+            message:
+              "Por falta de disponibilidad en el stock no se han podido agregar la cantidad solicitada. Se han agregado todas las unidades disponibles.",
+          });
+        }
+
+        await shoppingServices.updateOrAddOne({
+          post,
+          routeName,
+          req,
+          res,
+          amountToAdd,
+        });
+
+        await postServices.updateStockAmount({
+          req,
+          res,
+          query: { _id: post._id },
+          stockAmount: post.stockAmount - amountToAdd,
+        });
+
+        return res.send({});
+      }
+
       await shoppingServices.updateOrAddOne({
-        postId,
+        post,
         routeName,
         req,
         res,

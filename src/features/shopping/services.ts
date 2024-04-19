@@ -1,31 +1,27 @@
 import { QueryHandle } from "../../types/general";
-import { User } from "../../types/user";
-import { UserModel } from "../../schemas/user";
-import {
-  get401Response,
-  get404Response,
-  getUserNotFoundResponse,
-} from "../../utils/server-response";
-import { FilterQuery, ProjectionType, UpdateQuery } from "mongoose";
+import { getUserNotFoundResponse } from "../../utils/server-response";
+import { FilterQuery, UpdateQuery } from "mongoose";
 import { UpdateOptions } from "mongodb";
 import { ShoppingModel } from "../../schemas/shopping";
-import { postServices } from "../post/services";
-import { ServerResponse } from "http";
 import { Shopping } from "../../types/shopping";
+import { Post } from "../../types/post";
+import { isEqualIds } from "../../utils/general";
 
 const updateOrAddOne: QueryHandle<
   {
-    postId: string;
+    post: Post;
     routeName: string;
     amountToAdd?: Number;
   },
   void
-> = async ({ postId, amountToAdd = 1, req, res, routeName }) => {
+> = async ({ post, amountToAdd = 1, req, res, routeName }) => {
   const user = req.user;
 
   if (!user) {
     return getUserNotFoundResponse({ res });
   }
+
+  const { _id: postId } = post;
 
   const existInConstruction = await ShoppingModel.findOne({
     purchaserId: user._id,
@@ -34,9 +30,9 @@ const updateOrAddOne: QueryHandle<
   });
 
   if (existInConstruction) {
-    const existePost = existInConstruction.posts.find(
-      (e) => e.post._id.toString() === postId
-    );
+    const existePost = existInConstruction.posts.find((e) => {
+      return isEqualIds(e.post._id, postId);
+    });
 
     if (existePost) {
       await ShoppingModel.updateOne(
@@ -60,10 +56,6 @@ const updateOrAddOne: QueryHandle<
         }
       );
     } else {
-      const post = await postServices.getOne({ postId, res, req });
-
-      if (post instanceof ServerResponse) return post;
-
       await ShoppingModel.updateOne(
         {
           _id: existInConstruction._id,
@@ -87,10 +79,6 @@ const updateOrAddOne: QueryHandle<
       );
     }
   } else {
-    const post = await postServices.getOne({ postId, res, req });
-
-    if (post instanceof ServerResponse) return post;
-
     const newShopping = new ShoppingModel({
       state: "CONSTRUCTION",
       purchaserId: user._id,

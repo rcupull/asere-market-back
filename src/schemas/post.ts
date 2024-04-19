@@ -8,7 +8,6 @@ import { PostPageLayoutSchema } from "./common";
 export const PostSchema = new Schema<Post>({
   ...createdAtSchemaDefinition,
   routeName: { type: String, required: true },
-  amountAvailable: { type: Number },
   currency: { type: String, enum: ["CUP", "MLC", "USD"] },
   description: { type: String },
   details: { type: String },
@@ -42,6 +41,7 @@ export const PostSchema = new Schema<Post>({
   name: { type: String, required: true },
   price: { type: Number },
   discount: { type: Number },
+  stockAmount: { type: Number, default: null },
   postPageLayout: {
     type: PostPageLayoutSchema,
   },
