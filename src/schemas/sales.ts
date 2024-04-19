@@ -17,7 +17,7 @@ const SaleSchema = new Schema<Sale>({
   },
   purchaserId: { type: String, required: true },
   routeName: { type: String, required: true },
-  state: { type: String, enum: ["construction"], required: true },
+  state: { type: String, enum: ["CONSTRUCTION", "REQUESTED"], required: true },
 });
 
 export const SaleModel = model<Sale>("Sale", SaleSchema, "sales");

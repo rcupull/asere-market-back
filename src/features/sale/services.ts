@@ -29,7 +29,7 @@ const updateOrAddOne: QueryHandle<
 
   const existInConstruction = await SaleModel.findOne({
     purchaserId: user._id,
-    state: "construction",
+    state: "CONSTRUCTION",
     routeName: routeName,
   });
 
@@ -92,7 +92,7 @@ const updateOrAddOne: QueryHandle<
     if (post instanceof ServerResponse) return post;
 
     const newSale = new SaleModel({
-      state: "construction",
+      state: "CONSTRUCTION",
       purchaserId: user._id,
       routeName,
       posts: [

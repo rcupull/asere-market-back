@@ -30,3 +30,21 @@ router
     isLogged,
     saleHandles.delete_sale()
   );
+
+router
+  .route("/sale/:saleId")
+  .get(
+    validators.param("saleId").notEmpty(),
+    validators.handle,
+    isLogged,
+    saleHandles.get_sale_saleId()
+  );
+
+router
+  .route("/sale/:saleId/makeOrder")
+  .post(
+    validators.param("saleId").notEmpty(),
+    validators.handle,
+    isLogged,
+    saleHandles.post_sale_saleId_make_order()
+  );

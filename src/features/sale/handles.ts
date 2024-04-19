@@ -31,6 +31,33 @@ const get_sales: () => RequestHandler = () => {
   };
 };
 
+const get_sale_saleId: () => RequestHandler = () => {
+  return (req, res) => {
+    withTryCatch(req, res, async () => {
+      const { params, user } = req;
+
+      if (!user) {
+        return getUserNotFoundResponse({ res });
+      }
+
+      const { saleId } = params;
+
+      const out = await saleServices.getOne({
+        req,
+        res,
+        query: {
+          _id: saleId,
+          purchaserId: user._id,
+        },
+      });
+
+      if (out instanceof ServerResponse) return out;
+
+      res.send(out);
+    });
+  };
+};
+
 const post_sale: () => RequestHandler = () => {
   return (req, res) => {
     withTryCatch(req, res, async () => {
@@ -57,9 +84,45 @@ const post_sale: () => RequestHandler = () => {
   };
 };
 
+const post_sale_saleId_make_order: () => RequestHandler = () => {
+  return (req, res) => {
+    withTryCatch(req, res, async () => {
+      const user = req.user;
+
+      if (!user) {
+        return getUserNotFoundResponse({ res });
+      }
+
+      const { params } = req;
+
+      const { saleId } = params;
+
+      await saleServices.updateOne({
+        req,
+        res,
+        query: {
+          _id: saleId,
+          purchaserId: user._id,
+        },
+        update: {
+          state: "REQUESTED",
+        },
+      });
+
+      res.send({});
+    });
+  };
+};
+
 const delete_sale: () => RequestHandler = () => {
   return (req, res) => {
     withTryCatch(req, res, async () => {
+      const { user } = req;
+
+      if (!user) {
+        return getUserNotFoundResponse({ res });
+      }
+
       const { body } = req;
 
       const { routeName, postId } = body;
@@ -69,7 +132,9 @@ const delete_sale: () => RequestHandler = () => {
           res,
           req,
           query: {
-            state: "construction",
+            state: "CONSTRUCTION",
+            routeName,
+            purchaserId: user._id,
           },
           update: {
             $pull: {
@@ -84,7 +149,7 @@ const delete_sale: () => RequestHandler = () => {
           res,
           req,
           query: {
-            state: "construction",
+            state: "CONSTRUCTION",
             routeName,
           },
         });
@@ -99,4 +164,6 @@ export const saleHandles = {
   get_sales,
   post_sale,
   delete_sale,
+  get_sale_saleId,
+  post_sale_saleId_make_order,
 };
