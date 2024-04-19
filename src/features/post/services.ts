@@ -243,6 +243,7 @@ const addOne: QueryHandle<
     | "highlights"
     | "createdBy"
     | "postPageLayout"
+    | "postCategoriesTags"
   >,
   Post
 > = async (args) => {

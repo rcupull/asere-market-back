@@ -66,13 +66,42 @@ const post_posts: () => RequestHandler = () => {
     withTryCatch(req, res, async () => {
       const user = req.user as User;
       const { body } = req;
-      const { name, routeName, hidden, hiddenBusiness } = body;
+
+      const {
+        name,
+        routeName,
+        hidden,
+        hiddenBusiness,
+        amountAvailable,
+        clothingSizes,
+        colors,
+        currency,
+        description,
+        details,
+        highlights,
+        images,
+        postPageLayout,
+        price,
+        postCategoriesTags,
+      } = body;
 
       const out = await postServices.addOne({
         name,
         routeName,
         hidden,
         hiddenBusiness,
+        amountAvailable,
+        clothingSizes,
+        colors,
+        currency,
+        description,
+        details,
+        highlights,
+        images,
+        postPageLayout,
+        price,
+        postCategoriesTags,
+        //
         createdBy: user._id,
         res,
         req,
@@ -105,6 +134,7 @@ const post_posts_postId_duplicate: () => RequestHandler = () => {
         post;
 
       req.body = propsToUse;
+      req.body.name = `${req.body.name} (copy)`;
 
       // add new post
       //TODO it show be created next to the current post
