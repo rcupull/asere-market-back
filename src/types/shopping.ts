@@ -1,9 +1,9 @@
 import { BaseIdentity } from "./general";
 import { Post } from "./post";
 
-export type SaleState = "CONSTRUCTION" | "REQUESTED";
+export type ShoppingState = "CONSTRUCTION" | "REQUESTED";
 
-export interface Sale extends BaseIdentity {
+export interface Shopping extends BaseIdentity {
   posts: Array<{
     post: Post;
     count: number;
@@ -11,5 +11,5 @@ export interface Sale extends BaseIdentity {
   }>;
   purchaserId: string;
   routeName: string;
-  state: SaleState;
+  state: ShoppingState;
 }

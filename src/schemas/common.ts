@@ -1,17 +1,17 @@
 import { Schema } from "mongoose";
 import {
   PostCardLayout,
-  PostLayoutSalesMethod,
+  PostLayoutShoppingMethod,
   PostPageLayout,
   PostsLayout,
   PostsLayoutSection,
 } from "../types/business";
 import { SchemaDefinition } from "../types/general";
 
-const PostLayoutSalesMethodDefinition: SchemaDefinition<PostLayoutSalesMethod> =
+const PostLayoutShoppingMethodDefinition: SchemaDefinition<PostLayoutShoppingMethod> =
   {
     type: String,
-    enum: ["none", "whatsApp_xsLink_lgQR", "salesCart"],
+    enum: ["none", "whatsApp_xsLink_lgQR", "shoppingCart"],
   };
 
 export const PostCardLayoutSchema = new Schema<PostCardLayout>({
@@ -46,11 +46,11 @@ export const PostCardLayoutSchema = new Schema<PostCardLayout>({
     enum: ["none", "savedPercent", "savedMoney"],
     default: "none",
   },
-  salesMethod: PostLayoutSalesMethodDefinition,
+  shoppingMethod: PostLayoutShoppingMethodDefinition,
 });
 
 export const PostPageLayoutSchema = new Schema<PostPageLayout>({
-  salesMethod: PostLayoutSalesMethodDefinition,
+  shoppingMethod: PostLayoutShoppingMethodDefinition,
   postsSectionsBelowIds: { type: [String] },
 });
 

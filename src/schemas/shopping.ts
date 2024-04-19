@@ -1,9 +1,9 @@
 import { PaginateModel, Schema, model } from "mongoose";
 import { createdAtSchemaDefinition } from "../utils/schemas";
-import { Sale } from "../types/sales";
+import { Shopping } from "../types/shopping";
 import { PostSchema } from "./post";
 
-const SaleSchema = new Schema<Sale>({
+const ShoppingSchema = new Schema<Shopping>({
   ...createdAtSchemaDefinition,
   posts: {
     type: [
@@ -20,4 +20,8 @@ const SaleSchema = new Schema<Sale>({
   state: { type: String, enum: ["CONSTRUCTION", "REQUESTED"], required: true },
 });
 
-export const SaleModel = model<Sale>("Sale", SaleSchema, "sales");
+export const ShoppingModel = model<Shopping>(
+  "Shopping",
+  ShoppingSchema,
+  "shopping"
+);

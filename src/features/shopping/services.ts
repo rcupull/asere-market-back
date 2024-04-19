@@ -8,10 +8,10 @@ import {
 } from "../../utils/server-response";
 import { FilterQuery, ProjectionType, UpdateQuery } from "mongoose";
 import { UpdateOptions } from "mongodb";
-import { SaleModel } from "../../schemas/sales";
+import { ShoppingModel } from "../../schemas/shopping";
 import { postServices } from "../post/services";
 import { ServerResponse } from "http";
-import { Sale } from "../../types/sales";
+import { Shopping } from "../../types/shopping";
 
 const updateOrAddOne: QueryHandle<
   {
@@ -27,7 +27,7 @@ const updateOrAddOne: QueryHandle<
     return getUserNotFoundResponse({ res });
   }
 
-  const existInConstruction = await SaleModel.findOne({
+  const existInConstruction = await ShoppingModel.findOne({
     purchaserId: user._id,
     state: "CONSTRUCTION",
     routeName: routeName,
@@ -39,7 +39,7 @@ const updateOrAddOne: QueryHandle<
     );
 
     if (existePost) {
-      await SaleModel.updateOne(
+      await ShoppingModel.updateOne(
         {
           _id: existInConstruction._id,
         },
@@ -64,7 +64,7 @@ const updateOrAddOne: QueryHandle<
 
       if (post instanceof ServerResponse) return post;
 
-      await SaleModel.updateOne(
+      await ShoppingModel.updateOne(
         {
           _id: existInConstruction._id,
         },
@@ -91,7 +91,7 @@ const updateOrAddOne: QueryHandle<
 
     if (post instanceof ServerResponse) return post;
 
-    const newSale = new SaleModel({
+    const newShopping = new ShoppingModel({
       state: "CONSTRUCTION",
       purchaserId: user._id,
       routeName,
@@ -104,53 +104,53 @@ const updateOrAddOne: QueryHandle<
       ],
     });
 
-    await newSale.save();
+    await newShopping.save();
   }
 };
 
 const getAll: QueryHandle<
   {
-    query: FilterQuery<Sale>;
+    query: FilterQuery<Shopping>;
   },
-  Array<Sale>
+  Array<Shopping>
 > = async ({ query, res }) => {
-  const out = await SaleModel.find(query);
+  const out = await ShoppingModel.find(query);
 
   return out;
 };
 
 const getOne: QueryHandle<
   {
-    query: FilterQuery<Sale>;
+    query: FilterQuery<Shopping>;
   },
-  Sale | null
+  Shopping | null
 > = async ({ query }) => {
-  const out = await SaleModel.findOne(query);
+  const out = await ShoppingModel.findOne(query);
 
   return out;
 };
 
 const updateOne: QueryHandle<
   {
-    query: FilterQuery<Sale>;
-    update: UpdateQuery<Sale>;
+    query: FilterQuery<Shopping>;
+    update: UpdateQuery<Shopping>;
     options?: UpdateOptions;
   },
   void
 > = async ({ query, update, options }) => {
-  await SaleModel.updateOne(query, update, options);
+  await ShoppingModel.updateOne(query, update, options);
 };
 
 const deleteOne: QueryHandle<
   {
-    query: FilterQuery<Sale>;
+    query: FilterQuery<Shopping>;
   },
   void
 > = async ({ query }) => {
-  await SaleModel.deleteOne(query);
+  await ShoppingModel.deleteOne(query);
 };
 
-export const saleServices = {
+export const shoppingServices = {
   getOne,
   updateOne,
   updateOrAddOne,

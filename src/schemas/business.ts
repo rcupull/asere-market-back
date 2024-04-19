@@ -88,7 +88,7 @@ const BusinessSchema = new Schema<Business>({
     description: { type: String },
   },
   whatsAppPhoneNumber: { type: String },
-  salesStrategy: {
+  shoppingStrategy: {
     type: String,
     enum: [
       "none",
@@ -97,7 +97,7 @@ const BusinessSchema = new Schema<Business>({
     ],
     default: "none",
   },
-  salesMeta: {
+  shoppingMeta: {
     purchaseRequestTopInfo: { type: String },
   },
 });

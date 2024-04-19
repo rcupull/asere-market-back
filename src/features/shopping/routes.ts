@@ -3,48 +3,48 @@ import { validators } from "../../middlewares/express-validator";
 import { isLogged, isUserIdAccessible } from "../../middlewares/verify";
 
 import { pagination } from "../../middlewares/pagination";
-import { saleHandles } from "./handles";
+import { shoppingHandles } from "./handles";
 
 export const router = Router();
 
 /////////////////////////////////////////////////////////////////
 
 router
-  .route("/sale")
+  .route("/shopping")
   .get(
     validators.query("routeName").notEmpty(),
     validators.handle,
     isLogged,
-    saleHandles.get_sales()
+    shoppingHandles.get_shopping()
   )
   .post(
     validators.body("routeName").notEmpty(),
     validators.body("postId").notEmpty(),
     validators.handle,
     isLogged,
-    saleHandles.post_sale()
+    shoppingHandles.post_shopping()
   )
   .delete(
     validators.body("routeName").notEmpty(),
     validators.handle,
     isLogged,
-    saleHandles.delete_sale()
+    shoppingHandles.delete_shopping()
   );
 
 router
-  .route("/sale/:saleId")
+  .route("/shopping/:shoppingId")
   .get(
-    validators.param("saleId").notEmpty(),
+    validators.param("shoppingId").notEmpty(),
     validators.handle,
     isLogged,
-    saleHandles.get_sale_saleId()
+    shoppingHandles.get_shopping_shoppingId()
   );
 
 router
-  .route("/sale/:saleId/makeOrder")
+  .route("/shopping/:shoppingId/makeOrder")
   .post(
-    validators.param("saleId").notEmpty(),
+    validators.param("shoppingId").notEmpty(),
     validators.handle,
     isLogged,
-    saleHandles.post_sale_saleId_make_order()
+    shoppingHandles.post_shopping_shoppingId_make_order()
   );
