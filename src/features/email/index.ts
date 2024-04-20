@@ -15,6 +15,10 @@ const getValidationCodeRoute = (code: string): string => {
   return `http://local.community.com:5173/validate/${code}`;
 };
 
+const getForgotPasswordCodeRoute = (code: string): string => {
+  return `http://local.community.com:5173/forgot-password/${code}`;
+};
+
 export const sendValidationCodeToEmail = ({
   email,
   code,
@@ -29,6 +33,34 @@ export const sendValidationCodeToEmail = ({
         to: email,
         subject: "Verificación de la cuenta",
         text: `No debe responde a este correo. De click al siguiente link para validar su cuenta en Asere Market ${getValidationCodeRoute(
+          code
+        )}`,
+      },
+      (error: any, info: any) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(info);
+        }
+      }
+    );
+  });
+};
+
+export const sendForgotPasswordCodeToEmail = ({
+  email,
+  code,
+}: {
+  email: string;
+  code: string;
+}): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    transporter.sendMail(
+      {
+        from: user,
+        to: email,
+        subject: "Recuperación de la cuenta",
+        text: `No debe responde a este correo. De click al siguiente link para recuperar su cuenta en Asere Market ${getForgotPasswordCodeRoute(
           code
         )}`,
       },

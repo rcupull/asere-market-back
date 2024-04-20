@@ -49,6 +49,23 @@ router
   );
 
 router
+  .route("/auth/forgot-password-request")
+  .post(
+    validators.body("email").notEmpty(),
+    validators.handle,
+    authHandles.post_forgot_password_request()
+  );
+
+router
+  .route("/auth/forgot-password-validate")
+  .post(
+    validators.body("newPassword").notEmpty(),
+    validators.body("code").notEmpty(),
+    validators.handle,
+    authHandles.post_forgot_password_validate()
+  );
+
+router
   .route("/auth/change-password")
   .post(
     validators.body("newPassword").notEmpty(),

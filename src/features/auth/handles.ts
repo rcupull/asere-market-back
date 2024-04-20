@@ -4,7 +4,10 @@ import { ServerResponse } from "http";
 import { v4 as uuid } from "uuid";
 import { SessionModel, ValidationCodeModel } from "../../schemas/auth";
 import { userServices } from "../user/services";
-import { sendValidationCodeToEmail } from "../email";
+import {
+  sendForgotPasswordCodeToEmail,
+  sendValidationCodeToEmail,
+} from "../email";
 import { User } from "../../types/user";
 import {
   get200Response,
@@ -160,10 +163,92 @@ const post_change_password: () => RequestHandler = () => {
   };
 };
 
+const post_forgot_password_validate: () => RequestHandler = () => {
+  return async (req, res) => {
+    withTryCatch(req, res, async () => {
+      const { code, newPassword } = req.body;
+
+      const validationCode = await ValidationCodeModel.findOneAndDelete({
+        code,
+      });
+
+      if (!validationCode) {
+        return get404Response({
+          res,
+          json: {
+            message:
+              "Este codigo de validación no existe o ya la cuenta fue recuperada",
+          },
+        });
+      }
+
+      const user = await userServices.getOne({
+        res,
+        req,
+        query: { _id: validationCode.userId },
+      });
+
+      if (user instanceof ServerResponse) return user;
+
+      if (!user) {
+        return getUserNotFoundResponse({ res });
+      }
+
+      user.password = newPassword;
+      user.passwordVerbose = newPassword;
+
+      //@ts-expect-error ignore
+      await user.save();
+
+      get201Response({
+        res,
+        json: {
+          message: "The password was changes successfully",
+          email: user.email,
+        },
+      });
+    });
+  };
+};
+
+const post_forgot_password_request: () => RequestHandler = () => {
+  return (req, res) => {
+    withTryCatch(req, res, async () => {
+      const { email } = req.body;
+
+      const user = await userServices.getOne({
+        res,
+        req,
+        query: {
+          email,
+        },
+      });
+
+      if (user instanceof ServerResponse) return user;
+
+      const code = uuid();
+
+      await sendForgotPasswordCodeToEmail({ email, code });
+      const newValidationCode = new ValidationCodeModel({
+        code,
+        userId: user._id,
+      });
+      await newValidationCode.save();
+
+      get201Response({
+        res,
+        json: { message: "Forgot password request sent" },
+      });
+    });
+  };
+};
+
 export const authHandles = {
   post_signIn,
   post_signOut,
   post_signUp,
   post_validate,
   post_change_password,
+  post_forgot_password_request,
+  post_forgot_password_validate,
 };
