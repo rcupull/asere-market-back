@@ -135,9 +135,35 @@ const post_validate: () => RequestHandler = () => {
   };
 };
 
+const post_change_password: () => RequestHandler = () => {
+  return (req, res, next) => {
+    withTryCatch(req, res, async () => {
+      const { user, body } = req;
+
+      if (!user) {
+        return getUserNotFoundResponse({ res });
+      }
+
+      const { newPassword } = body;
+
+      user.password = newPassword;
+      user.passwordVerbose = newPassword;
+
+      //@ts-expect-error ignore
+      await user.save();
+
+      get200Response({
+        res,
+        json: { message: "password changed successfully" },
+      });
+    });
+  };
+};
+
 export const authHandles = {
   post_signIn,
   post_signOut,
   post_signUp,
   post_validate,
+  post_change_password,
 };

@@ -3,6 +3,7 @@ import { Router } from "express";
 import { validators } from "../../middlewares/express-validator";
 import { authHandles } from "./handles";
 import { passportLocalMiddleware } from "../../middlewares/passport";
+import { isLogged } from "../../middlewares/verify";
 
 export const router = Router();
 /////////////////////////////////////////////////////////////////
@@ -45,4 +46,13 @@ router
     validators.body("code").notEmpty(),
     validators.handle,
     authHandles.post_validate()
+  );
+
+router
+  .route("/auth/change-password")
+  .post(
+    validators.body("newPassword").notEmpty(),
+    validators.handle,
+    isLogged,
+    authHandles.post_change_password()
   );
