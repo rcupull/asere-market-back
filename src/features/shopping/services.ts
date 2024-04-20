@@ -87,6 +87,7 @@ const updateOrAddOne: QueryHandle<
     const newShopping = new ShoppingModel({
       state: "CONSTRUCTION",
       purchaserId: user._id,
+      purchaserName: user.name,
       routeName,
       posts: [
         {

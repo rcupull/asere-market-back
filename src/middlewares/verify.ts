@@ -11,6 +11,10 @@ import { businessServices } from "../features/business/services";
 
 export const isLogged = passportJwtMiddleware;
 
+const getFieldInReqData = (req: Request, field: string) => {
+  return req.body[field] || req.query[field] || req.params[field];
+};
+
 export const isAdmin: RequestHandler = (req, res, next) => {
   const user = req.user;
 
@@ -39,7 +43,7 @@ export const isUserIdAccessible: RequestHandler = (req, res, next) => {
 };
 
 export const isUserBusinessOwner: RequestHandler = async (req, res, next) => {
-  const user = req.user as User;
+  const { user } = req;
 
   if (!user) {
     return get404Response({
@@ -63,8 +67,8 @@ export const isUserThisBusinessOwner: RequestHandler = async (
   res,
   next
 ) => {
-  const user = req.user as User;
-  const routeName = req.params.routeName || req.body.routeName;
+  const { user } = req;
+  const routeName = getFieldInReqData(req, "routeName");
 
   if (!user) {
     return get404Response({

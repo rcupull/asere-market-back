@@ -9,7 +9,10 @@ export interface Shopping extends BaseIdentity {
     count: number;
     lastUpdatedDate: Date;
   }>;
+  //
   purchaserId: string;
+  purchaserName: string;
+  //
   routeName: string;
   state: ShoppingState;
 }

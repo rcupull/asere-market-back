@@ -1,7 +1,10 @@
 import { RequestHandler } from "../../types/general";
 import { withTryCatch } from "../../utils/error";
-import { Server, ServerResponse } from "http";
-import { getUserNotFoundResponse } from "../../utils/server-response";
+import { ServerResponse } from "http";
+import {
+  getBusinessNotFoundResponse,
+  getUserNotFoundResponse,
+} from "../../utils/server-response";
 import { shoppingServices } from "./services";
 import { postServices } from "../post/services";
 import { isEqualIds, isNumber } from "../../utils/general";
@@ -22,6 +25,32 @@ const get_shopping: () => RequestHandler = () => {
         res,
         query: {
           purchaserId: user._id,
+          "posts.post.routeName": routeName,
+        },
+      });
+
+      if (out instanceof ServerResponse) return out;
+
+      res.send(out);
+    });
+  };
+};
+
+const get_shopping_owner: () => RequestHandler = () => {
+  return (req, res) => {
+    withTryCatch(req, res, async () => {
+      const { business } = req;
+
+      if (!business) {
+        return getBusinessNotFoundResponse({ res });
+      }
+
+      const { routeName } = business;
+
+      const out = await shoppingServices.getAll({
+        req,
+        res,
+        query: {
           "posts.post.routeName": routeName,
         },
       });
@@ -260,4 +289,6 @@ export const shoppingHandles = {
   delete_shopping,
   get_shopping_shoppingId,
   post_shopping_shoppingId_make_order,
+  //
+  get_shopping_owner,
 };

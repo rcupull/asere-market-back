@@ -90,3 +90,7 @@ export const getPostNotFoundResponse = ({ res }: { res: Response }) => {
 export const getUserNotFoundResponse = ({ res }: { res: Response }) => {
   return get404Response({ res, json: { message: "User not found" } });
 };
+
+export const getBusinessNotFoundResponse = ({ res }: { res: Response }) => {
+  return get404Response({ res, json: { message: "Business not found" } });
+};

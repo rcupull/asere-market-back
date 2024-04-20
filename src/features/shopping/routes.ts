@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { validators } from "../../middlewares/express-validator";
-import { addPostToReq, isLogged } from "../../middlewares/verify";
+import {
+  addPostToReq,
+  isLogged,
+  isUserThisBusinessOwner,
+} from "../../middlewares/verify";
 
 import { shoppingHandles } from "./handles";
 
@@ -29,6 +33,16 @@ router
     isLogged,
     addPostToReq,
     shoppingHandles.delete_shopping()
+  );
+
+router
+  .route("/shopping/owner")
+  .get(
+    validators.query("routeName").notEmpty(),
+    validators.handle,
+    isLogged,
+    isUserThisBusinessOwner,
+    shoppingHandles.get_shopping_owner()
   );
 
 router

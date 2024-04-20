@@ -66,7 +66,7 @@ const updateOne: QueryHandle<
     options?: UpdateOptions;
   },
   void
-> = async ({ query, res, update, options }) => {
+> = async ({ query, update, options }) => {
   await UserModel.updateOne(query, update, options);
 };
 

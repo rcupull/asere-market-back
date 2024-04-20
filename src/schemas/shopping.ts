@@ -16,6 +16,7 @@ const ShoppingSchema = new Schema<Shopping>({
     ],
   },
   purchaserId: { type: String, required: true },
+  purchaserName: { type: String, required: true },
   routeName: { type: String, required: true },
   state: { type: String, enum: ["CONSTRUCTION", "REQUESTED"], required: true },
 });
