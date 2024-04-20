@@ -1,8 +1,7 @@
 import { Router } from "express";
 import { validators } from "../../middlewares/express-validator";
-import { isLogged, isUserIdAccessible } from "../../middlewares/verify";
+import { addPostToReq, isLogged } from "../../middlewares/verify";
 
-import { pagination } from "../../middlewares/pagination";
 import { shoppingHandles } from "./handles";
 
 export const router = Router();
@@ -18,16 +17,17 @@ router
     shoppingHandles.get_shopping()
   )
   .post(
-    validators.body("routeName").notEmpty(),
     validators.body("postId").notEmpty(),
     validators.handle,
     isLogged,
+    addPostToReq,
     shoppingHandles.post_shopping()
   )
   .delete(
     validators.body("routeName").notEmpty(),
     validators.handle,
     isLogged,
+    addPostToReq,
     shoppingHandles.delete_shopping()
   );
 

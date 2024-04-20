@@ -136,6 +136,25 @@ export const isUserThisPostOwner: RequestHandler = async (req, res, next) => {
   });
 };
 
+export const addPostToReq: RequestHandler = async (req, res, next) => {
+  const postId = req.params.postId || req.body.postId;
+
+  if (!postId) {
+    return next();
+  }
+
+  const post = await postServices.getOne({
+    res,
+    req,
+    postId,
+  });
+
+  if (post instanceof ServerResponse) return post;
+
+  req.post = post;
+  return next();
+};
+
 export type RequestWithUser<
   P = AnyRecord,
   ResBody = any,

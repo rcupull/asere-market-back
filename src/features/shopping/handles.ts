@@ -1,10 +1,10 @@
 import { RequestHandler } from "../../types/general";
 import { withTryCatch } from "../../utils/error";
-import { ServerResponse } from "http";
+import { Server, ServerResponse } from "http";
 import { getUserNotFoundResponse } from "../../utils/server-response";
 import { shoppingServices } from "./services";
 import { postServices } from "../post/services";
-import { isNumber } from "../../utils/general";
+import { isEqualIds, isNumber } from "../../utils/general";
 
 const get_shopping: () => RequestHandler = () => {
   return (req, res) => {
@@ -63,7 +63,7 @@ const get_shopping_shoppingId: () => RequestHandler = () => {
 const post_shopping: () => RequestHandler = () => {
   return (req, res) => {
     withTryCatch(req, res, async () => {
-      const user = req.user;
+      const { user } = req;
 
       if (!user) {
         return getUserNotFoundResponse({ res });
@@ -71,62 +71,34 @@ const post_shopping: () => RequestHandler = () => {
 
       const { body } = req;
 
-      const { postId, amountToAdd = 1, routeName } = body;
+      const { amountToAdd = 1 } = body;
 
-      const post = await postServices.getOne({ postId, res, req });
+      const amountAddedToPost = await postServices.updateStockAmount({
+        req,
+        res,
+        amountToAdd: -amountToAdd,
+      });
 
-      if (post instanceof ServerResponse) return post;
+      if (amountAddedToPost instanceof ServerResponse) return amountAddedToPost;
 
-      if (isNumber(post.stockAmount)) {
-        /**
-         * habilitado el feature de stock amount
-         */
-        if (amountToAdd > post.stockAmount) {
-          /**
-           * la cantidad solicitada es mayor que la disponible
-           */
-          await shoppingServices.updateOrAddOne({
-            post,
-            routeName,
-            req,
-            res,
-            amountToAdd: post.stockAmount,
-          });
+      if (isNumber(amountAddedToPost)) {
+        await shoppingServices.updateOrAddOne({
+          req,
+          res,
+          amountToAdd: -amountAddedToPost,
+        });
 
-          await postServices.updateStockAmount({
-            req,
-            res,
-            query: { _id: post._id },
-            stockAmount: 0,
-          });
-
+        if (amountAddedToPost !== amountToAdd) {
           return res.send({
             message:
-              "Por falta de disponibilidad en el stock no se han podido agregar la cantidad solicitada. Se han agregado todas las unidades disponibles.",
+              "Por falta de disponibilidad en el stock no se han podido agregar la cantidad solicitada. Se han agregado solamente las cantidades disponibles.",
           });
         }
-
-        await shoppingServices.updateOrAddOne({
-          post,
-          routeName,
-          req,
-          res,
-          amountToAdd,
-        });
-
-        await postServices.updateStockAmount({
-          req,
-          res,
-          query: { _id: post._id },
-          stockAmount: post.stockAmount - amountToAdd,
-        });
 
         return res.send({});
       }
 
       await shoppingServices.updateOrAddOne({
-        post,
-        routeName,
         req,
         res,
         amountToAdd,
@@ -181,7 +153,7 @@ const delete_shopping: () => RequestHandler = () => {
       const { routeName, postId } = body;
 
       if (postId) {
-        await shoppingServices.updateOne({
+        const oldShopping = await shoppingServices.findAndUpdateOne({
           res,
           req,
           query: {
@@ -197,15 +169,84 @@ const delete_shopping: () => RequestHandler = () => {
             },
           },
         });
-      } else {
-        await shoppingServices.deleteOne({
-          res,
-          req,
-          query: {
-            state: "CONSTRUCTION",
-            routeName,
-          },
+
+        if (oldShopping instanceof ServerResponse) return oldShopping;
+
+        if (!oldShopping) {
+          return res.send({});
+        }
+
+        if (oldShopping.posts.length === 1) {
+          /**
+           * si tenia 1 elemento, el cual ya fuel eliminado en el paso anterior entonces debe ser eliminada la shooping
+           */
+          await shoppingServices.deleteOne({
+            res,
+            req,
+            query: {
+              _id: oldShopping._id,
+            },
+          });
+        }
+
+        const shoppingPostToUpdate = oldShopping.posts.find((p) => {
+          return isEqualIds(p.post._id, postId);
         });
+
+        await postServices.updateStockAmount({
+          req,
+          res,
+          amountToAdd: shoppingPostToUpdate?.count ?? 0,
+        });
+
+        return res.send({});
+      }
+
+      /**
+       * Delete the whole shopping
+       */
+      const oldShopping = await shoppingServices.findOneAndDelete({
+        res,
+        req,
+        query: {
+          state: "CONSTRUCTION",
+          routeName,
+        },
+      });
+
+      if (oldShopping instanceof ServerResponse) return oldShopping;
+
+      if (oldShopping) {
+        const promises = oldShopping.posts.map(
+          ({ post: { _id: postId }, count }) => {
+            return new Promise((resolve) => {
+              postServices
+                .getOne({
+                  res,
+                  req,
+                  postId,
+                })
+                .then((post) => {
+                  if (post instanceof ServerResponse) {
+                    return resolve(post);
+                  }
+
+                  req.post = post;
+                  postServices
+                    .updateStockAmount({
+                      req,
+                      res,
+                      amountToAdd: count,
+                    })
+                    .then(() => {
+                      resolve(null);
+                    });
+                });
+            });
+          }
+        );
+
+        await Promise.all(promises);
       }
 
       res.send({});

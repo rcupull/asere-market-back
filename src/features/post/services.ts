@@ -1,4 +1,4 @@
-import { FilterQuery, PaginateOptions, UpdateQuery } from "mongoose";
+import { FilterQuery, PaginateOptions, Schema, UpdateQuery } from "mongoose";
 import { QueryHandle } from "../../types/general";
 import { PostModel } from "../../schemas/post";
 import { Post } from "../../types/post";
@@ -9,6 +9,7 @@ import {
   get404Response,
   getPostNotFoundResponse,
 } from "../../utils/server-response";
+import { isNumber } from "../../utils/general";
 
 export interface GetAllArgs {
   paginateOptions?: PaginateOptions;
@@ -133,7 +134,7 @@ const getAllWithOutPagination: QueryHandle<GetAllArgs, Array<Post>> = async (
 
 const getOne: QueryHandle<
   {
-    postId: string;
+    postId: string | Schema.Types.ObjectId;
     hidden?: boolean;
   },
   Post
@@ -297,13 +298,50 @@ const updateOne: QueryHandle<{
   });
 };
 
-const updateStockAmount: QueryHandle<{
-  query: FilterQuery<Post>;
-  stockAmount: number;
-}> = async ({ query, stockAmount }) => {
-  await PostModel.updateOne(query, {
-    stockAmount,
-  });
+const updateStockAmount: QueryHandle<
+  {
+    amountToAdd: number;
+  },
+  number | null
+> = async ({ amountToAdd, req, res }) => {
+  const { post } = req;
+
+  if (!post) {
+    return getPostNotFoundResponse({ res });
+  }
+
+  if (isNumber(post.stockAmount)) {
+    /**
+     * Enabled stock amount feature
+     */
+    const newStockAmount = post.stockAmount + amountToAdd;
+
+    if (newStockAmount < 0) {
+      await PostModel.updateOne(
+        {
+          _id: post._id,
+        },
+        {
+          stockAmount: 0,
+        }
+      );
+
+      return -post.stockAmount;
+    }
+
+    await PostModel.updateOne(
+      {
+        _id: post._id,
+      },
+      {
+        stockAmount: newStockAmount,
+      }
+    );
+
+    return amountToAdd;
+  }
+
+  return null;
 };
 
 const updateMany: QueryHandle<{

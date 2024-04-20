@@ -1,5 +1,8 @@
 import { QueryHandle } from "../../types/general";
-import { getUserNotFoundResponse } from "../../utils/server-response";
+import {
+  getPostNotFoundResponse,
+  getUserNotFoundResponse,
+} from "../../utils/server-response";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { UpdateOptions } from "mongodb";
 import { ShoppingModel } from "../../schemas/shopping";
@@ -9,19 +12,21 @@ import { isEqualIds } from "../../utils/general";
 
 const updateOrAddOne: QueryHandle<
   {
-    post: Post;
-    routeName: string;
     amountToAdd?: Number;
   },
   void
-> = async ({ post, amountToAdd = 1, req, res, routeName }) => {
-  const user = req.user;
+> = async ({ amountToAdd = 1, req, res }) => {
+  const { user, post } = req;
 
   if (!user) {
     return getUserNotFoundResponse({ res });
   }
 
-  const { _id: postId } = post;
+  if (!post) {
+    return getPostNotFoundResponse({ res });
+  }
+
+  const { _id: postId, routeName } = post;
 
   const existInConstruction = await ShoppingModel.findOne({
     purchaserId: user._id,
@@ -129,6 +134,16 @@ const updateOne: QueryHandle<
   await ShoppingModel.updateOne(query, update, options);
 };
 
+const findAndUpdateOne: QueryHandle<
+  {
+    query: FilterQuery<Shopping>;
+    update: UpdateQuery<Shopping>;
+  },
+  Shopping | null
+> = async ({ query, update }) => {
+  return await ShoppingModel.findOneAndUpdate(query, update);
+};
+
 const deleteOne: QueryHandle<
   {
     query: FilterQuery<Shopping>;
@@ -138,10 +153,21 @@ const deleteOne: QueryHandle<
   await ShoppingModel.deleteOne(query);
 };
 
+const findOneAndDelete: QueryHandle<
+  {
+    query: FilterQuery<Shopping>;
+  },
+  Shopping | null
+> = async ({ query }) => {
+  return await ShoppingModel.findOneAndDelete(query);
+};
+
 export const shoppingServices = {
   getOne,
   updateOne,
   updateOrAddOne,
   getAll,
   deleteOne,
+  findAndUpdateOne,
+  findOneAndDelete,
 };
