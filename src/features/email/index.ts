@@ -11,7 +11,11 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendEmail = ({
+const getValidationCodeRoute = (code: string): string => {
+  return `http://local.community.com:5173/validate/${code}`;
+};
+
+export const sendValidationCodeToEmail = ({
   email,
   code,
 }: {
@@ -24,7 +28,9 @@ export const sendEmail = ({
         from: user,
         to: email,
         subject: "Verificación de la cuenta",
-        text: `No debe responde a este correo. Ingrese el siguiente código de verificación ${code} en la aplicación.`,
+        text: `No debe responde a este correo. De click al siguiente link para validar su cuenta en Asere Market ${getValidationCodeRoute(
+          code
+        )}`,
       },
       (error: any, info: any) => {
         if (error) {

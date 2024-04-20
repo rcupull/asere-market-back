@@ -70,8 +70,19 @@ const updateOne: QueryHandle<
   await UserModel.updateOne(query, update, options);
 };
 
+const findOneAndUpdate: QueryHandle<
+  {
+    query: FilterQuery<User>;
+    update: UpdateQuery<User>;
+  },
+  User | null
+> = async ({ query, update }) => {
+  return await UserModel.findOneAndUpdate(query, update);
+};
+
 export const userServices = {
   addOne,
   getOne,
   updateOne,
+  findOneAndUpdate,
 };

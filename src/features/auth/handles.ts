@@ -1,16 +1,17 @@
 import { RequestHandler } from "../../types/general";
 import { withTryCatch } from "../../utils/error";
 import { ServerResponse } from "http";
-import { UserModel } from "../../schemas/user";
 import { v4 as uuid } from "uuid";
 import { SessionModel, ValidationCodeModel } from "../../schemas/auth";
 import { userServices } from "../user/services";
-import { sendEmail } from "../email";
+import { sendValidationCodeToEmail } from "../email";
 import { User } from "../../types/user";
 import {
   get200Response,
   get201Response,
   get401Response,
+  get404Response,
+  getUserNotFoundResponse,
 } from "../../utils/server-response";
 
 const post_signIn: () => RequestHandler = () => {
@@ -77,9 +78,9 @@ const post_signUp: () => RequestHandler = () => {
       if (newUser instanceof ServerResponse) return;
 
       // send validation code by email
-      const code = uuid().slice(0, 4).toUpperCase();
+      const code = uuid();
 
-      await sendEmail({ email, code });
+      await sendValidationCodeToEmail({ email, code });
       const newValidationCode = new ValidationCodeModel({
         code,
         userId: newUser._id,
@@ -97,37 +98,38 @@ const post_signUp: () => RequestHandler = () => {
 const post_validate: () => RequestHandler = () => {
   return async (req, res) => {
     withTryCatch(req, res, async () => {
-      const { email, code } = req.body;
+      const { code } = req.body;
 
-      const user = await UserModel.findOne({ email });
-      if (!user) {
-        return get401Response({
+      const validationCode = await ValidationCodeModel.findOneAndDelete({
+        code,
+      });
+
+      if (!validationCode) {
+        return get404Response({
           res,
-          json: { message: "This user does not exist" },
+          json: {
+            message:
+              "Este codigo de validación no existe o ya el usuario fue validado",
+          },
         });
       }
 
-      //check validation code
-      const validationCode = await ValidationCodeModel.findOne({
-        code,
-        userId: user.id,
+      const user = await userServices.findOneAndUpdate({
+        res,
+        req,
+        query: { _id: validationCode.userId },
+        update: { validated: true },
       });
-      if (!validationCode) {
-        return res
-          .status(400)
-          .json({ message: "This validation code does not exist" });
+
+      if (user instanceof ServerResponse) return user;
+
+      if (!user) {
+        return getUserNotFoundResponse({ res });
       }
-
-      //validate user
-      user.validated = true;
-      await user.save();
-
-      //delete validation code
-      await ValidationCodeModel.deleteOne({ _id: validationCode._id });
 
       get201Response({
         res,
-        json: { message: "User validated successfully" },
+        json: { message: "User validated successfully", email: user.email },
       });
     });
   };

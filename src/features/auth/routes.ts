@@ -42,7 +42,6 @@ router
 router
   .route("/auth/validate")
   .post(
-    validators.body("email").notEmpty().isEmail(),
     validators.body("code").notEmpty(),
     validators.handle,
     authHandles.post_validate()
