@@ -3,11 +3,13 @@ import { withTryCatch } from "../../utils/error";
 import { ServerResponse } from "http";
 import {
   getBusinessNotFoundResponse,
+  getPostNotFoundResponse,
   getUserNotFoundResponse,
 } from "../../utils/server-response";
 import { shoppingServices } from "./services";
 import { postServices } from "../post/services";
 import { isEqualIds, isNumber } from "../../utils/general";
+import { notificationsServices } from "../notifications";
 
 const get_shopping: () => RequestHandler = () => {
   return (req, res) => {
@@ -92,29 +94,51 @@ const get_shopping_shoppingId: () => RequestHandler = () => {
 const post_shopping: () => RequestHandler = () => {
   return (req, res) => {
     withTryCatch(req, res, async () => {
-      const { user } = req;
+      const { user, post } = req;
 
       if (!user) {
         return getUserNotFoundResponse({ res });
+      }
+
+      if (!post) {
+        return getPostNotFoundResponse({ res });
       }
 
       const { body } = req;
 
       const { amountToAdd = 1 } = body;
 
-      const amountAddedToPost = await postServices.updateStockAmount({
+      const updateStockResponse = await postServices.updateStockAmount({
         req,
         res,
         amountToAdd: -amountToAdd,
       });
 
-      if (amountAddedToPost instanceof ServerResponse) return amountAddedToPost;
+      if (updateStockResponse instanceof ServerResponse) {
+        return updateStockResponse;
+      }
 
-      if (isNumber(amountAddedToPost)) {
+      if (
+        isNumber(updateStockResponse?.amountAddedToPost) &&
+        isNumber(updateStockResponse?.currentStockAmount)
+      ) {
+        const { amountAddedToPost, currentStockAmount } = updateStockResponse;
+
         await shoppingServices.updateOrAddOne({
           req,
           res,
           amountToAdd: -amountAddedToPost,
+        });
+
+        /**
+         * send notification to update the post. TODO maybe we need some conditions
+         */
+        await notificationsServices.sendNotificationToUpdate({
+          type: "POST_AMOUNT_STOCK_CHANGE",
+          data: {
+            stockAmount: currentStockAmount,
+            postId: post._id.toString(),
+          },
         });
 
         if (amountAddedToPost !== amountToAdd) {
@@ -222,11 +246,28 @@ const delete_shopping: () => RequestHandler = () => {
           return isEqualIds(p.post._id, postId);
         });
 
-        await postServices.updateStockAmount({
+        const updateStockResponse = await postServices.updateStockAmount({
           req,
           res,
           amountToAdd: shoppingPostToUpdate?.count ?? 0,
         });
+
+        if (updateStockResponse instanceof ServerResponse) {
+          return updateStockResponse;
+        }
+
+        /**
+         * push Notification to update the stock in  the front
+         */
+        if (updateStockResponse) {
+          await notificationsServices.sendNotificationToUpdate({
+            type: "POST_AMOUNT_STOCK_CHANGE",
+            data: {
+              stockAmount: updateStockResponse.currentStockAmount,
+              postId,
+            },
+          });
+        }
 
         return res.send({});
       }
@@ -267,7 +308,27 @@ const delete_shopping: () => RequestHandler = () => {
                       res,
                       amountToAdd: count,
                     })
-                    .then(() => {
+                    .then((updateStockResponse) => {
+                      if (updateStockResponse instanceof ServerResponse) {
+                        return resolve(updateStockResponse);
+                      }
+
+                      if (updateStockResponse) {
+                        const { currentStockAmount } = updateStockResponse;
+
+                        notificationsServices
+                          .sendNotificationToUpdate({
+                            type: "POST_AMOUNT_STOCK_CHANGE",
+                            data: {
+                              stockAmount: currentStockAmount,
+                              postId: post._id.toString(),
+                            },
+                          })
+                          .then(() => {
+                            resolve(null);
+                          });
+                      }
+
                       resolve(null);
                     });
                 });

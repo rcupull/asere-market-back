@@ -179,6 +179,11 @@ const put_posts_postId: () => RequestHandler = () => {
 
       if (out instanceof ServerResponse) return;
 
+      // await notificationsServices.sendNotification({
+      //   title: "Producto actulizado",
+      //   message: `El producto ${currentPost.name} ha sido actualizado`,
+      // });
+
       res.send(out);
     });
   };

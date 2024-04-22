@@ -302,7 +302,10 @@ const updateStockAmount: QueryHandle<
   {
     amountToAdd: number;
   },
-  number | null
+  {
+    amountAddedToPost: number;
+    currentStockAmount: number;
+  } | null
 > = async ({ amountToAdd, req, res }) => {
   const { post } = req;
 
@@ -314,19 +317,23 @@ const updateStockAmount: QueryHandle<
     /**
      * Enabled stock amount feature
      */
-    const newStockAmount = post.stockAmount + amountToAdd;
+    let newStockAmount = post.stockAmount + amountToAdd;
 
     if (newStockAmount < 0) {
+      newStockAmount = 0;
       await PostModel.updateOne(
         {
           _id: post._id,
         },
         {
-          stockAmount: 0,
+          stockAmount: newStockAmount,
         }
       );
 
-      return -post.stockAmount;
+      return {
+        amountAddedToPost: -post.stockAmount,
+        currentStockAmount: newStockAmount,
+      };
     }
 
     await PostModel.updateOne(
@@ -338,7 +345,10 @@ const updateStockAmount: QueryHandle<
       }
     );
 
-    return amountToAdd;
+    return {
+      amountAddedToPost: amountToAdd,
+      currentStockAmount: newStockAmount,
+    };
   }
 
   return null;
