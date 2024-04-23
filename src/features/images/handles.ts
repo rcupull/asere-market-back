@@ -1,10 +1,11 @@
 import { RequestHandler } from "../../types/general";
-import { filesDir, uploadImageMiddleware } from "../../middlewares/files";
+import { uploadImageMiddleware } from "../../middlewares/files";
 import { combineMiddleware } from "../../utils/general";
 import { withTryCatch } from "../../utils/error";
 import { imagesServices } from "./services";
 import { ServerResponse } from "http";
 import { get200Response } from "../../utils/server-response";
+import { getAssetsDir } from "../../config";
 
 const save_image: () => RequestHandler = () => {
   return combineMiddleware(
@@ -16,7 +17,7 @@ const save_image: () => RequestHandler = () => {
       }
 
       res.send({
-        imageSrc: file.path.replace(filesDir, ""),
+        imageSrc: file.path.replace(getAssetsDir(), ""),
       });
     }
   );

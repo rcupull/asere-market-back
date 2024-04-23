@@ -1,7 +1,6 @@
 import multer from "multer";
 import fs from "fs";
-
-export const filesDir = "app-images";
+import { getAssetsImageDir } from "../config";
 
 const imageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -11,7 +10,7 @@ const imageStorage = multer.diskStorage({
       return cb(new Error("routeName is required to upload a postimage"), "");
     }
 
-    let path = `./${filesDir}/${userId}/`;
+    let path = `${getAssetsImageDir()}/${userId}/`;
 
     if (routeName) {
       path = `${path}${routeName}/`;

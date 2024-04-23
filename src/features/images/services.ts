@@ -1,12 +1,12 @@
-import { filesDir } from "../../middlewares/files";
 import { Image, QueryHandle } from "../../types/general";
 import fs from "fs";
 import { get400Response } from "../../utils/server-response";
+import { getAssetsImageDir } from "../../config";
 
 const deleteOne: QueryHandle<{
   src: string;
 }> = async ({ src, res }) => {
-  const fullPath = `${filesDir}${src}`;
+  const fullPath = `${getAssetsImageDir()}${src}`;
 
   if (fs.existsSync(fullPath)) {
     fs.unlink(fullPath, (err) => {
@@ -25,7 +25,7 @@ const deleteDir: QueryHandle<{
   routeName?: string;
   userId: string;
 }> = async ({ postId, routeName, userId, res }) => {
-  let path = `./${filesDir}/${userId}/`;
+  let path = `${getAssetsImageDir()}/${userId}/`;
 
   if (routeName) {
     path = `${path}${routeName}/`;
