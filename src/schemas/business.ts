@@ -100,6 +100,41 @@ const BusinessSchema = new Schema<Business>({
   shoppingMeta: {
     purchaseRequestTopInfo: { type: String },
   },
+  postFormFields: {
+    type: [
+      {
+        type: String,
+        enum: [
+          "name",
+          "currency",
+          "clothingSizes",
+          "colors",
+          "description",
+          "price",
+          "details",
+          "postCategoriesTags",
+          "discount",
+          "postPageLayout",
+          "stockAmount",
+          "images",
+        ],
+      },
+    ],
+    default: [
+      "name",
+      "currency",
+      "clothingSizes",
+      "colors",
+      "description",
+      "price",
+      "details",
+      "postCategoriesTags",
+      "discount",
+      "postPageLayout",
+      "stockAmount",
+      "images",
+    ],
+  },
 });
 
 BusinessSchema.plugin(mongoosePaginate);

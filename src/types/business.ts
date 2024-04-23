@@ -1,5 +1,6 @@
 import { BaseIdentity, Image } from "./general";
 import mongose from "mongoose";
+import { Post } from "./post";
 
 export type BusinessCategory = "food" | "tool" | "clothing" | "service";
 
@@ -131,4 +132,21 @@ export interface Business extends BaseIdentity {
   shoppingMeta?: {
     purchaseRequestTopInfo?: string;
   };
+  postFormFields?: Array<
+    Extract<
+      Post,
+      | "name"
+      | "currency"
+      | "clothingSizes"
+      | "colors"
+      | "description"
+      | "price"
+      | "details"
+      | "postCategoriesTags"
+      | "discount"
+      | "postPageLayout"
+      | "stockAmount"
+      | "images"
+    >
+  >;
 }
