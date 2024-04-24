@@ -11,14 +11,12 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const NODE_ENV = process.env.NODE_ENV;
-export const getUrl = () => {
-  if (NODE_ENV === "production") {
-    return "http://192.241.145.70";
-  }
+const HOSTNAME = process.env.HOSTNAME;
+const PORT = process.env.PORT;
 
-  if (NODE_ENV === "staging") {
-    return "http://192.241.145.70:8080";
+export const getUrl = () => {
+  if (HOSTNAME && PORT) {
+    return `${HOSTNAME}:${PORT}`;
   }
 
   return "http://localhost:5173";

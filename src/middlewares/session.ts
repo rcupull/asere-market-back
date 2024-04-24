@@ -1,13 +1,13 @@
 import session from "express-session";
 import { SECRET_ACCESS_TOKEN } from "../constants/auth";
 import connectMongoSession from "connect-mongodb-session";
-import { getUrl } from "../db";
+import { dbUrl } from "../db";
 
 const MongoDBStore = connectMongoSession(session);
 
 const store = new MongoDBStore(
   {
-    uri: getUrl(),
+    uri: dbUrl,
     databaseName: "asere-market-stage",
     collection: "sessions",
   },
