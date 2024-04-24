@@ -11,12 +11,25 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+const NODE_ENV = process.env.NODE_ENV;
+export const getUrl = () => {
+  if (NODE_ENV === "production") {
+    return "http://192.241.145.70";
+  }
+
+  if (NODE_ENV === "staging") {
+    return "http://192.241.145.70:8080";
+  }
+
+  return "http://localhost:5173";
+};
+
 const getValidationCodeRoute = (code: string): string => {
-  return `http://local.community.com:5173/validate/${code}`;
+  return `${getUrl()}/validate/${code}`;
 };
 
 const getForgotPasswordCodeRoute = (code: string): string => {
-  return `http://local.community.com:5173/forgot-password/${code}`;
+  return `${getUrl()}/forgot-password/${code}`;
 };
 
 export const sendValidationCodeToEmail = ({
