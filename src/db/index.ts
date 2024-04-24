@@ -6,7 +6,8 @@ const ATLAS_PASS = process.env.ATLAS_PASS;
 const getAtlasUrlDb = (db: string) => {
   return `mongodb+srv://rcupull:${ATLAS_PASS}@cluster0.3ageacp.mongodb.net/${db}?retryWrites=true&w=majority`;
 };
-const getUrl = () => {
+
+export const getUrl = () => {
   if (NODE_ENV === "production") {
     return getAtlasUrlDb("asere-market-prod");
   }
