@@ -243,6 +243,36 @@ const post_forgot_password_request: () => RequestHandler = () => {
   };
 };
 
+const put_firebase_token: () => RequestHandler = () => {
+  return (req, res, next) => {
+    withTryCatch(req, res, async () => {
+      const { user, body } = req;
+
+      if (!user) {
+        return getUserNotFoundResponse({ res });
+      }
+
+      const { firebaseToken } = body;
+
+      await userServices.updateOne({
+        res,
+        req,
+        query: {
+          _id: user._id,
+        },
+        update: {
+          firebaseToken,
+        },
+      });
+
+      get200Response({
+        res,
+        json: {},
+      });
+    });
+  };
+};
+
 export const authHandles = {
   post_signIn,
   post_signOut,
@@ -251,4 +281,5 @@ export const authHandles = {
   post_change_password,
   post_forgot_password_request,
   post_forgot_password_validate,
+  put_firebase_token,
 };

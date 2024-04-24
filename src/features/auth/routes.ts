@@ -73,3 +73,12 @@ router
     isLogged,
     authHandles.post_change_password()
   );
+
+router
+  .route("/auth/firebase/token")
+  .put(
+    validators.body("firebaseToken").notEmpty(),
+    validators.handle,
+    isLogged,
+    authHandles.put_firebase_token()
+  );

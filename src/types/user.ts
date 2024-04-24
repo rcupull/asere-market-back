@@ -28,4 +28,5 @@ export interface User extends BaseIdentity {
       }
     ];
   };
+  firebaseToken?: string;
 }
