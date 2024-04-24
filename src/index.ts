@@ -1,7 +1,21 @@
 import { connectDB } from "./db";
 import { app } from "./server";
 
-const PORT = process.env.PORT || "4009";
+const NODE_ENV = process.env.NODE_ENV;
+
+export const getPort = () => {
+  if (NODE_ENV === "production") {
+    return "80";
+  }
+
+  if (NODE_ENV === "staging") {
+    return "8080";
+  }
+
+  return "4009";
+};
+
+const PORT = getPort();
 
 connectDB();
 
