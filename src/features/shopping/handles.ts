@@ -135,10 +135,8 @@ const post_shopping: () => RequestHandler = () => {
          */
         await notificationsServices.sendNotificationToUpdate({
           type: "POST_AMOUNT_STOCK_CHANGE",
-          data: {
-            stockAmount: currentStockAmount,
-            postId: post._id.toString(),
-          },
+          stockAmount: currentStockAmount,
+          postId: post._id.toString(),
         });
 
         if (amountAddedToPost !== amountToAdd) {
@@ -262,10 +260,8 @@ const delete_shopping: () => RequestHandler = () => {
         if (updateStockResponse) {
           await notificationsServices.sendNotificationToUpdate({
             type: "POST_AMOUNT_STOCK_CHANGE",
-            data: {
-              stockAmount: updateStockResponse.currentStockAmount,
-              postId,
-            },
+            stockAmount: updateStockResponse.currentStockAmount,
+            postId,
           });
         }
 
@@ -319,10 +315,8 @@ const delete_shopping: () => RequestHandler = () => {
                         notificationsServices
                           .sendNotificationToUpdate({
                             type: "POST_AMOUNT_STOCK_CHANGE",
-                            data: {
-                              stockAmount: currentStockAmount,
-                              postId: post._id.toString(),
-                            },
+                            stockAmount: currentStockAmount,
+                            postId: post._id.toString(),
                           })
                           .then(() => {
                             resolve(null);
