@@ -59,6 +59,16 @@ const getOne: QueryHandle<
   return user;
 };
 
+const find: QueryHandle<
+  {
+    query: FilterQuery<User>;
+    projection?: ProjectionType<User>;
+  },
+  Array<User>
+> = async ({ query, projection }) => {
+  return await UserModel.find(query, projection);
+};
+
 const updateOne: QueryHandle<
   {
     query: FilterQuery<User>;
@@ -85,4 +95,5 @@ export const userServices = {
   getOne,
   updateOne,
   findOneAndUpdate,
+  find,
 };

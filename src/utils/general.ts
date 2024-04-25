@@ -1,5 +1,10 @@
 import { Schema } from "mongoose";
-import { AnyRecord, EmptyObjectOf, RequestHandler } from "../types/general";
+import {
+  AnyRecord,
+  EmptyObjectOf,
+  Nullable,
+  RequestHandler,
+} from "../types/general";
 import dlv from "dlv";
 import { dset } from "dset";
 import { Path } from "../types/paths";
@@ -82,4 +87,8 @@ export const isNullOrUndefinedOrEmptyString = (
   value: unknown
 ): value is null | undefined | "" => {
   return isNullOrUndefined(value) || value === "";
+};
+
+export const compact = <T = any>(value: Array<Nullable<T>>): Array<T> => {
+  return value.filter((val) => val) as Array<T>;
 };

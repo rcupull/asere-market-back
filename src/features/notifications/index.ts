@@ -1,6 +1,10 @@
 import { join } from "path";
 import { NotificationToUpdatePayload } from "../../types/notifications";
 import firebase from "firebase-admin";
+import { userServices } from "../user/services";
+import { QueryHandle } from "../../types/general";
+import { ServerResponse } from "http";
+import { compact } from "../../utils/general";
 
 const credentialsPath =
   process.env.GOOGLE_APPLICATION_CREDENTIALS ||
@@ -14,45 +18,29 @@ const init = () => {
   console.info("Initialized Firebase SDK");
 };
 
-const sendNotification = async (args: { title: string; message: string }) => {
-  // try {
-  //   await firebase.messaging().send({
-  //     data: { score: "850", time: "2:45" },
-  //     token:
-  //       "eP3HI4GAUz1jBJ_8AzdWZ1:APA91bE6eQA3wRzIBANvhHJ1jBlXDhRuAHEAS_-CQzExqgaqbh14GqmEPs2ZE_hnVY4-sWpkd6vQnn-lgCKaHNdY1vxPMMVq5Mw1nepuFsEKdwLIpGXEKFDjLTIiCKGuCRUm4SO6r1va",
-  //   });
-  // } catch (error) {
-  //   console.log("some firebase error");
-  // }
-  // const { title, message } = args;
-  // const notification = new Notification();
-  // notification.app_id = ONESIGNAL_APP_ID;
-  // notification.included_segments = ["All"];
-  // notification.headings = {
-  //   en: title,
-  // };
-  // notification.contents = {
-  //   en: message,
-  // };
-  // notification.data = {
-  //   type: "POST_AMOUNT_STOCK_CHANGE",
-  //   data: {},
-  // };
-  // await client.createNotification(notification);
-};
+const sendNotification = async (args: { title: string; message: string }) => {};
 
-const sendNotificationToUpdate = async (
-  payload: NotificationToUpdatePayload
-) => {
-  try {
-    await firebase.messaging().send({
-      data: { payload: JSON.stringify(payload) },
-      token:
-        "fbt89zlObvNEwAWsbwtxTj:APA91bH-OYMXJspmVzryDny8vIWuLzDJd6VntBBBnX3f9HpLQ-IWXolGSs1vdVfVU3kyKllukG03YmBQIasyDIlrdwlBnyVMEZIT2AQNU82uuCq9TkvMk2S7LT5BnuQUiCu3RNdITW0s",
-    });
-  } catch (error) {
-    console.log("some firebase error");
-  }
+const sendNotificationToUpdate: QueryHandle<{
+  payload: NotificationToUpdatePayload;
+}> = async ({ payload, res, req }) => {
+  const users = await userServices.find({
+    res,
+    req,
+    query: {},
+    projection: {
+      firebaseToken: 1,
+    },
+  });
+
+  if (users instanceof ServerResponse) return users;
+
+  //TODO no deberias mandar a todos los usuario si no a los que tiene abierta la pagina de ese negocio
+  const tokens = compact(users.map((user) => user.firebaseToken));
+
+  await firebase.messaging().sendEachForMulticast({
+    data: { payload: JSON.stringify(payload) },
+    tokens,
+  });
 };
 
 export const notificationsServices = {

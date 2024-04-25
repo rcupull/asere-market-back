@@ -134,9 +134,13 @@ const post_shopping: () => RequestHandler = () => {
          * send notification to update the post. TODO maybe we need some conditions
          */
         await notificationsServices.sendNotificationToUpdate({
-          type: "POST_AMOUNT_STOCK_CHANGE",
-          stockAmount: currentStockAmount,
-          postId: post._id.toString(),
+          res,
+          req,
+          payload: {
+            type: "POST_AMOUNT_STOCK_CHANGE",
+            stockAmount: currentStockAmount,
+            postId: post._id.toString(),
+          },
         });
 
         if (amountAddedToPost !== amountToAdd) {
@@ -259,9 +263,13 @@ const delete_shopping: () => RequestHandler = () => {
          */
         if (updateStockResponse) {
           await notificationsServices.sendNotificationToUpdate({
-            type: "POST_AMOUNT_STOCK_CHANGE",
-            stockAmount: updateStockResponse.currentStockAmount,
-            postId,
+            res,
+            req,
+            payload: {
+              type: "POST_AMOUNT_STOCK_CHANGE",
+              stockAmount: updateStockResponse.currentStockAmount,
+              postId,
+            },
           });
         }
 
@@ -314,9 +322,13 @@ const delete_shopping: () => RequestHandler = () => {
 
                         notificationsServices
                           .sendNotificationToUpdate({
-                            type: "POST_AMOUNT_STOCK_CHANGE",
-                            stockAmount: currentStockAmount,
-                            postId: post._id.toString(),
+                            req,
+                            res,
+                            payload: {
+                              type: "POST_AMOUNT_STOCK_CHANGE",
+                              stockAmount: currentStockAmount,
+                              postId: post._id.toString(),
+                            },
                           })
                           .then(() => {
                             resolve(null);
