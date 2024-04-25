@@ -6,9 +6,10 @@ import { QueryHandle } from "../../types/general";
 import { ServerResponse } from "http";
 import { compact } from "../../utils/general";
 
-const credentialsPath =
-  process.env.GOOGLE_APPLICATION_CREDENTIALS ||
-  join(process.cwd(), "../firebase-adminsdk-dev.json");
+const credentialsPath = join(
+  process.cwd(),
+  process.env.GOOGLE_APPLICATION_CREDENTIALS || "../firebase-adminsdk-dev.json"
+);
 const serviceAccount = require(credentialsPath);
 
 const init = () => {
